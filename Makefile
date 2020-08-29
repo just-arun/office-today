@@ -1,5 +1,8 @@
+setup:
+	export GOBIN=$(pwd)/bin
+
 dev:
-	reflex -r '\.go$' -s -- sh -c "go run ./cmd/office-today/main.go"
+	go run ./cmd/office-today/main.go
 
 install:
 	go install ./cmd/office-today/main.go
@@ -12,3 +15,4 @@ run:
 
 clear:
 	rm -rf ./main
+	rm -rf ./bin/*
