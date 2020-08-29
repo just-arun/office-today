@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os/exec"
 
 	"github.com/just-arun/office-today/internals/boot/config"
 
@@ -13,20 +12,16 @@ import (
 )
 
 func main() {
-	fmt.Println("Setting up environment...")
-	_, err := exec.Command("export GOBIN=$(pwd)/bin").
-		Output()
-	if err != nil {
-		fmt.Println("[ERROR]", err)
-	}
+	fmt.Println("Setting up application...")
 	config.Init()
 
-	fmt.Println("server started at port", config.Port)
+	// defining multiplexer
 	r := mux.NewRouter()
 	// Regestering routes
 	routes.Auth(r)
 	routes.Users(r)
 	routes.Posts(r)
 	routes.Comments(r)
+	fmt.Printf("server started at port http://localhost%v\n", config.Port)
 	log.Fatal(http.ListenAndServe(config.Port, r), "server terminated")
 }
