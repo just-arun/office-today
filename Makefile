@@ -5,10 +5,10 @@ dev:
 	go run ./cmd/office-today/main.go
 
 install:
-	go install ./cmd/office-today/main.go
+	go install ./...
 
 build:
-	go build ./cmd/office-today/main.go
+	go build ./...
 
 run:
 	./main
