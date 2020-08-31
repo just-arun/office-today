@@ -5,6 +5,8 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/just-arun/office-today/internals/boot/database"
+
 	"github.com/just-arun/office-today/internals/boot/config"
 
 	"github.com/gorilla/mux"
@@ -14,7 +16,8 @@ import (
 func main() {
 	fmt.Println("Setting up application...")
 	config.Init()
-
+	// Init database
+	database.Init()
 	// defining multiplexer
 	r := mux.NewRouter()
 	// Regestering routes

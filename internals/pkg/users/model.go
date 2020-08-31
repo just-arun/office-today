@@ -31,8 +31,9 @@ type Users struct {
 	ContactPerson            string    `json:"contactPerson,omitempty" bson:"contact_person"`
 	ContactPersonDestination string    `json:"contactPersonDescription,omitempty" bson:"contact_person_destination"`
 
-	UserStatus userstatus.UserStatus `json:"userStatus,omitempty" bson:"user_status"`
-	UserType   usertype.UserType     `json:"userType,omitempty" bson:"user_type"`
-	CreatedAt  time.Time             `json:"cretedAt" bson:"created_at"`
-	UpdatedAt  time.Time             `json:"updatedAt" bson:"updated_at"`
+	RefreshToken string                `bson:"refresh_token"`
+	UserStatus   userstatus.UserStatus `json:"userStatus,omitempty" bson:"user_status"`
+	UserType     usertype.UserType     `json:"userType,omitempty" bson:"user_type"`
+	CreatedAt    time.Time             `json:"cretedAt" bson:"created_at"`
+	UpdatedAt    time.Time             `json:"updatedAt" bson:"updated_at"`
 }

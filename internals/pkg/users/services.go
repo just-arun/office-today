@@ -53,30 +53,6 @@ func Update(
 	return result.UpsertedID, err
 }
 
-// RegisterAudience used to register audience
-func (u *Users) RegisterAudience() (map[string]interface{}, error) {
-
-	dbUser, _ := GetOne(
-		map[string]interface{}{
-			"email": u.Email,
-		},
-	)
-
-	if dbUser != nil {
-		return nil, errors.New("User already exist")
-	}
-
-	u.UserType = Usertype.Audience
-	u.UserStatus = Userstatus.Active // saving users
-	userID, err := u.Save()
-
-	if err != nil {
-		return nil, err
-	}
-
-	return map[string]interface{}{
-		"id": userID}, nil
-}
 
 // CreateAudience create audience by admin
 func (u *Users) CreateAudience() (map[string]interface{}, error) {
@@ -191,4 +167,25 @@ func GetUserComments(userID string) ([]*comments.Comments, error) {
 	}
 
 	return comment, nil
+}
+
+// UpdateRefreshToken update refresh token
+func UpdateRefreshToken(userID string, rToken string) error {
+	objID, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		return err
+	}
+	_, err = collections.User().UpdateOne(
+		context.TODO(),
+		bson.M{"_id": objID},
+		bson.M{
+			"$set": bson.M{
+				"refresh_token": rToken,
+			},
+		},
+	)
+	if err != nil {
+		return err
+	}
+	return nil
 }
