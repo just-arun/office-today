@@ -21,3 +21,10 @@ func Post() *mongo.Collection {
 }
 
 
+// Comment connection for database
+func Comment() *mongo.Collection {
+	return database.DataBaseConnection.
+		Database(config.DatabaseName).
+		Collection("comments")
+}
+

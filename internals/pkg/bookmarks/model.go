@@ -1,4 +1,4 @@
-package enquiry
+package bookmarks
 
 import (
 	"time"
@@ -6,8 +6,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// Enquiry structure
-type Enquiry struct {
+// Bookmark structure
+type Bookmark struct {
 	ID        primitive.ObjectID `json:"id" bson:"_id"`
 	UserID    primitive.ObjectID `json:"userId" bson:"user_id"`
 	PostID    primitive.ObjectID `json:"postId" bson:"post_id"`
