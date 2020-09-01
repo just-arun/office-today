@@ -20,4 +20,23 @@ func Post() *mongo.Collection {
 		Collection("posts")
 }
 
+// Comment connection for database
+func Comment() *mongo.Collection {
+	return database.DataBaseConnection.
+		Database(config.DatabaseName).
+		Collection("comments")
+}
 
+// Bookmarks connection for database
+func Bookmarks() *mongo.Collection {
+	return database.DataBaseConnection.
+		Database(config.DatabaseName).
+		Collection("comments")
+}
+
+// Enquiry connection for database
+func Enquiry() *mongo.Collection {
+	return database.DataBaseConnection.
+		Database(config.DatabaseName).
+		Collection("comments")
+}

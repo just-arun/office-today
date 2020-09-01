@@ -31,7 +31,6 @@ func GenerateToken(userID string, tokenType JWTTokenType) (string, error) {
 	claims["id"] = stringutil.HashFromString(userID)
 	if tokenType == AccessToken {
 		claims["exp"] = time.Now().Add(config.JWTAccessTokenTime).Unix()
-		fmt.Println("[TIME]", claims["exp"])
 	} else {
 		claims["exp"] = time.Now().Add(config.JWTRefreshTokenTime).Unix()
 	}
