@@ -1,6 +1,8 @@
 package config
 
 import (
+	"strconv"
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -43,15 +45,20 @@ func getEnvValue(key string) interface{} {
 // Init initialize configuration
 func Init() {
 	strToInt := func(s interface{}) int64 {
-		strInt, _ := s.(int64)
+		strInt, err := strconv.ParseInt(s.(string), 10, 64)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Printf("FORMATING: %v \t %v",s, strInt)
 		return strInt
 	}
 
 	Port = ":" + getEnvValue("PORT").(string)
 	DatabaseHost = getEnvValue("DATABASE_HOST").(string)
 	DatabaseName = getEnvValue("DATABASE_NAME").(string)
-	JWTAccessTokenTime = (time.Minute * time.Duration(strToInt(getEnvValue("ACCESS_TOKEN_TIMING"))))
-	JWTRefreshTokenTime = (time.Minute * time.Duration(strToInt(getEnvValue("REFRESH_TOKEN_TIMING"))))
+	JWTAccessTokenTime = time.Duration(strToInt(getEnvValue("ACCESS_TOKEN_TIMING")))
+	JWTRefreshTokenTime = time.Duration(strToInt(getEnvValue("REFRESH_TOKEN_TIMING")))
 	TokenSignature = getEnvValue("TOKEN_SIGNATURE").(string)
 	SendGridAPIKey = getEnvValue("SENDGRID_API_KEY").(string)
+	fmt.Printf("[DURATION], %v \n", strToInt(getEnvValue("ACCESS_TOKEN_TIMING")))
 }

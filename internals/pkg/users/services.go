@@ -64,7 +64,7 @@ func Update(
 func (u *Users) CreateAudience() (map[string]interface{}, error) {
 
 	dbUser, _ := GetOne(
-		map[string]interface{}{
+		bson.M{
 			"email": u.Email,
 		},
 	)
@@ -73,8 +73,8 @@ func (u *Users) CreateAudience() (map[string]interface{}, error) {
 		return nil, errors.New("User already exist")
 	}
 
-	u.UserType = Usertype.Publisher
-	u.UserStatus = Userstatus.Active
+	u.Type = Usertype.Publisher
+	u.Status = Userstatus.Active
 
 	// saving users
 	userID, err := u.Save()
@@ -90,7 +90,7 @@ func (u *Users) CreateAudience() (map[string]interface{}, error) {
 
 // GetOne user
 func GetOne(
-	filter map[string]interface{},
+	filter bson.M,
 ) (*Users, error) {
 	var user Users
 	ctx := context.TODO()

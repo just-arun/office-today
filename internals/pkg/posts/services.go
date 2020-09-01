@@ -34,7 +34,7 @@ func (p *Posts) Save() (string, error) {
 }
 
 // GetOne post
-func GetOne(fileter map[string]interface{}) (*Posts, error) {
+func GetOne(fileter bson.M) (*Posts, error) {
 	var post Posts
 
 	ctx := context.TODO()
@@ -115,15 +115,14 @@ func GetPostComments(postID string) ([]*comments.Comments, error) {
 //   }
 
 //   filter := bson.M{ "_id": ID }
-  
-  
+
 //   result, err := collections.
 //     Post().
 //     UpdateOne(
 //       context.TODO(),
-//      filter, 
+//      filter,
 
 //     )
 
-//   return nil, nil  
+//   return nil, nil
 // }

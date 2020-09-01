@@ -1,11 +1,12 @@
 package auth
 
 import (
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"fmt"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"github.com/just-arun/office-today/internals/middleware/response"
 
@@ -49,21 +50,21 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		response.Error(w, http.StatusForbidden, err.Error())
 		return
 	}
-  result, err := LoginService(&login)
-  if err != nil {
+	result, err := LoginService(&login)
+	if err != nil {
 		response.Error(w, http.StatusForbidden, err.Error())
 		return
   }
-  fmt.Println("[ID]", result["_id"].(primitive.ObjectID).Hex())
+	fmt.Println("[ID]", result["_id"], err)
 
 	gCtx.Set(r, "refresh", true)
-  gCtx.Set(r, "uid", result["_id"].(primitive.ObjectID).Hex())
-  
-  response.Success(
-    w,r,
-    http.StatusOK,
-    result,
-  )
+	gCtx.Set(r, "uid", result["_id"].(primitive.ObjectID).Hex())
+
+	response.Success(
+		w, r,
+		http.StatusOK,
+		result,
+	)
 }
 
 // ForgotPassword password status set
@@ -83,5 +84,24 @@ func UpdatePassword(w http.ResponseWriter, r *http.Request) {
 
 // RefreshToken update access token
 func RefreshToken(w http.ResponseWriter, r *http.Request) {
+	var token RefreshTokenDto
+	if err := json.NewDecoder(r.Body).Decode(&token); err != nil {
+		response.Error(w, http.StatusForbidden, err.Error())
+		return
+	}
+	tokenData, err := RefreshTokenService(&token)
+	if err != nil {
+		response.Error(w, http.StatusForbidden, err.Error())
+		return
+  }
   
+	gCtx.Set(r, "refresh", true)
+	gCtx.Set(r, "uid", tokenData["uid"])
+  
+  response.Success(
+    w, r,
+    http.StatusOK,
+    map[string]interface{}{
+    "ok": 1,
+  })
 }

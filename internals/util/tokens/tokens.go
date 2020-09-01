@@ -30,10 +30,14 @@ func GenerateToken(userID string, tokenType JWTTokenType) (string, error) {
 	// set some claims
 	claims["id"] = stringutil.HashFromString(userID)
 	if tokenType == AccessToken {
-		claims["exp"] = time.Now().Add(config.JWTAccessTokenTime).Unix()
+		claims["exp"] = time.Now().Add(time.Minute * config.JWTAccessTokenTime).Unix()
 	} else {
-		claims["exp"] = time.Now().Add(config.JWTRefreshTokenTime).Unix()
+		claims["exp"] = time.Now().Add(time.Minute * config.JWTRefreshTokenTime).Unix()
 	}
+
+	fmt.Printf("[claims %v]: %v \n", tokenType, claims["exp"])
+
+	fmt.Printf("Access: %v, Refresh: %v \n", time.Minute * config.JWTAccessTokenTime, time.Minute * config.JWTRefreshTokenTime)
 
 	token.Claims = claims
 

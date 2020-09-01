@@ -35,6 +35,11 @@ func Auth(r *mux.Router) {
 		auth.ResetPassword,
 	).Methods("POST")
 
+	// reset refresh token for users
+	s.HandleFunc("/refresh-token",
+		auth.RefreshToken,
+	).Methods("PATCH")
+
 	// update password for users
 	s.HandleFunc("/update-password",
 		middleware.Auth(
