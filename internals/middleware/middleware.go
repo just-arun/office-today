@@ -6,8 +6,6 @@ import (
 
 	"github.com/just-arun/office-today/internals/middleware/ownerarea"
 
-	"github.com/gorilla/mux"
-
 	"github.com/just-arun/office-today/internals/pkg/users/userstatus"
 
 	"github.com/just-arun/office-today/internals/pkg/users"
@@ -72,45 +70,36 @@ func Auth(next func(http.ResponseWriter, *http.Request)) func(http.ResponseWrite
 // Owner authentication of user check if the users are logedin
 func Owner(next func(http.ResponseWriter, *http.Request), ownerAccess ownerarea.OwnerArea) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		accessID := mux.Vars(r)["id"]
-		userID := gCtx.Get(r, "uid")
-		userType := gCtx.Get(r, "type")
+		// accessID := mux.Vars(r)["id"]
+		// userID := gCtx.Get(r, "uid")
+		// userType := gCtx.Get(r, "type")
 
-		// check on user table
-		isOwner := accessID == userID
+		// // check on user table
+		// isOwner := accessID == userID
 
 		switch ownerAccess {
 		case ownerarea.User:
 			fmt.Println("owner user")
+			next(w, r)
 			break
-
 		case ownerarea.Post:
 			fmt.Println("owner post")
+			next(w, r)
 			break
-
 		case ownerarea.Like:
 			fmt.Println("owner like")
+			next(w, r)
 			break
-
 		case ownerarea.Comment:
 			fmt.Println("owner comment")
+			next(w, r)
 			break
-
 		case ownerarea.Bookmark:
 			fmt.Println("owner bookmark")
-			break
-
-		}
-
-		fmt.Printf("Access: %v, User: %v \n", accessID, userID)
-
-		if isOwner || userType == usertype.Admin {
 			next(w, r)
-		} else {
-			w.WriteHeader(http.StatusUnauthorized)
-			return
+			break
 		}
-
+		w.WriteHeader(http.StatusUnauthorized)
 	}
 }
 
