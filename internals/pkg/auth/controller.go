@@ -1,6 +1,8 @@
 package auth
 
 import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"fmt"
 	"encoding/json"
 	"io"
 	"net/http"
@@ -42,7 +44,26 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 // Login for user
 func Login(w http.ResponseWriter, r *http.Request) {
-	io.WriteString(w, "this is login shit")
+	var login LoginDto
+	if err := json.NewDecoder(r.Body).Decode(&login); err != nil {
+		response.Error(w, http.StatusForbidden, err.Error())
+		return
+	}
+  result, err := LoginService(&login)
+  if err != nil {
+		response.Error(w, http.StatusForbidden, err.Error())
+		return
+  }
+  fmt.Println("[ID]", result["_id"].(primitive.ObjectID).Hex())
+
+	gCtx.Set(r, "refresh", true)
+  gCtx.Set(r, "uid", result["_id"].(primitive.ObjectID).Hex())
+  
+  response.Success(
+    w,r,
+    http.StatusOK,
+    result,
+  )
 }
 
 // ForgotPassword password status set
@@ -58,4 +79,9 @@ func ResetPassword(w http.ResponseWriter, r *http.Request) {
 // UpdatePassword update password
 func UpdatePassword(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, "update password")
+}
+
+// RefreshToken update access token
+func RefreshToken(w http.ResponseWriter, r *http.Request) {
+  
 }

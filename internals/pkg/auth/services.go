@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"github.com/just-arun/office-today/internals/util/password"
 	"errors"
 
 	"github.com/just-arun/office-today/internals/pkg/users"
@@ -25,8 +26,25 @@ func RegisterService(u *users.Users) (interface{}, error) {
 }
 
 // LoginService for user
-func LoginService() {
+func LoginService(login *LoginDto) (map[string]interface{}, error) {
+	// get User from database
+	user, err := users.GetOne(map[string]interface{}{
+		"email": login.Email,
+	})
 
+	if err != nil {
+		return nil, err
+	}
+
+	if !password.Compare(login.Password, user.Password) {
+		return nil, err
+	}
+
+	return map[string]interface{}{
+		"email": user.Email,
+		"userName": user.UserName,
+		"_id": user.ID,
+	}, nil
 }
 
 // ForgotPasswordService password status set

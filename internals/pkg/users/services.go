@@ -5,6 +5,8 @@ import (
 	"errors"
 	"time"
 
+	"github.com/just-arun/office-today/internals/util/password"
+
 	"github.com/just-arun/office-today/internals/pkg/comments"
 
 	"github.com/just-arun/office-today/internals/pkg/posts"
@@ -23,6 +25,11 @@ import (
 
 // Save user
 func (u *Users) Save() (string, error) {
+	pwd, err := password.Encrypt(u.Password)
+	if err != nil {
+		return "", err
+	}
+	u.Password = pwd
 	u.CreatedAt = time.Now().UTC()
 	u.UpdatedAt = time.Now().UTC()
 	ctx := context.TODO()
@@ -52,7 +59,6 @@ func Update(
 	}
 	return result.UpsertedID, err
 }
-
 
 // CreateAudience create audience by admin
 func (u *Users) CreateAudience() (map[string]interface{}, error) {

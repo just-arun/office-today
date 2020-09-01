@@ -14,9 +14,9 @@ import (
 type successData struct {
 	Status       int                    `json:"status"`
 	Data         map[string]interface{} `json:"data"`
-	AccessToken  string                 `json:"accessToken"`
-	RefreshToken string                 `json:"refreshToken"`
-	ResetPwd     bool                   `json:"resetPwd"`
+	AccessToken  string                 `json:"accessToken,omitempty"`
+	RefreshToken string                 `json:"refreshToken,omitempty"`
+	ResetPwd     bool                   `json:"resetPwd,omitempty"`
 }
 
 // Success response
