@@ -4,6 +4,10 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/just-arun/office-today/internals/middleware/ownerarea"
+
+	"github.com/gorilla/mux"
+
 	"github.com/just-arun/office-today/internals/pkg/users/userstatus"
 
 	"github.com/just-arun/office-today/internals/pkg/users"
@@ -21,7 +25,6 @@ import (
 // Auth authentication of user check if the users are logedin
 func Auth(next func(http.ResponseWriter, *http.Request)) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("Auth middleware...")
 		token, err := tokens.GetTokenFromHeader(r)
 		if err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
@@ -57,7 +60,7 @@ func Auth(next func(http.ResponseWriter, *http.Request)) func(http.ResponseWrite
 			return
 		}
 
-		gCtx.Set(r, "uid", user.ID)
+		gCtx.Set(r, "uid", user.ID.Hex())
 		gCtx.Set(r, "email", user.Email)
 		gCtx.Set(r, "type", user.Type)
 
@@ -67,17 +70,53 @@ func Auth(next func(http.ResponseWriter, *http.Request)) func(http.ResponseWrite
 }
 
 // Owner authentication of user check if the users are logedin
-func Owner(next func(http.ResponseWriter, *http.Request)) func(http.ResponseWriter, *http.Request) {
+func Owner(next func(http.ResponseWriter, *http.Request), ownerAccess ownerarea.OwnerArea) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("Auth middleware...")
-		next(w, r)
+		accessID := mux.Vars(r)["id"]
+		userID := gCtx.Get(r, "uid")
+		userType := gCtx.Get(r, "type")
+
+		// check on user table
+		isOwner := accessID == userID
+
+		switch ownerAccess {
+		case ownerarea.User:
+			fmt.Println("owner user")
+			break
+
+		case ownerarea.Post:
+			fmt.Println("owner post")
+			break
+
+		case ownerarea.Like:
+			fmt.Println("owner like")
+			break
+
+		case ownerarea.Comment:
+			fmt.Println("owner comment")
+			break
+
+		case ownerarea.Bookmark:
+			fmt.Println("owner bookmark")
+			break
+
+		}
+
+		fmt.Printf("Access: %v, User: %v \n", accessID, userID)
+
+		if isOwner || userType == usertype.Admin {
+			next(w, r)
+		} else {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+
 	}
 }
 
 // UserType authentication of user check if the users are logedin
 func UserType(next func(http.ResponseWriter, *http.Request), userType ...usertype.UserType) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("user type middleware...")
 		usType := gCtx.Get(r, "type")
 		for _, uType := range userType {
 			if usType == uType {

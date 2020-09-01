@@ -3,6 +3,8 @@ package routes
 import (
 	"fmt"
 
+	"github.com/just-arun/office-today/internals/middleware/ownerarea"
+
 	"github.com/just-arun/office-today/internals/middleware"
 	"github.com/just-arun/office-today/internals/pkg/users"
 
@@ -17,7 +19,10 @@ func Users(r *mux.Router) {
 	// GetUser
 	s.HandleFunc("/{id}",
 		middleware.Auth(
-			users.GetUser,
+			middleware.Owner(
+				users.GetUser,
+				ownerarea.User,
+			),
 		),
 	).Methods("GET")
 }
