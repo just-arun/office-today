@@ -46,6 +46,13 @@ func GetUserPost(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+// GetMyPost for getting all my post
+func GetMyPost(w http.ResponseWriter, r *http.Request) {
+	// page := r.URL.Query()["page"]
+	// userID := gCtx.Get(r)["uid"]
+	return
+}
+
 //DisablePost for disable user post
 func DisablePost(w http.ResponseWriter, r *http.Request) {
 	// postID := mux.Vars(r)["id"]

@@ -28,23 +28,6 @@ func Posts(r *mux.Router) {
 	).
 		Methods("POST")
 
-	s.HandleFunc("/{id}",
-		middleware.Auth(
-			middleware.Owner(
-				posts.UpdateOne,
-				ownerarea.Post,
-			),
-		),
-	).
-		Methods("PUT")
-
-	s.HandleFunc("/{id}",
-		middleware.Auth(
-			posts.GetOne,
-		),
-	).
-		Methods("GET")
-
 	s.HandleFunc("/",
 		middleware.Auth(
 			posts.GetAllPost,
@@ -58,6 +41,11 @@ func Posts(r *mux.Router) {
 		),
 	).Methods("GET")
 
+	s.HandleFunc("/my-post", middleware.Auth(
+		posts.GetMyPost,
+	)).
+		Methods("GET")
+
 	s.HandleFunc("/{id}",
 		middleware.Auth(
 			middleware.Owner(
@@ -67,4 +55,22 @@ func Posts(r *mux.Router) {
 		),
 	).
 		Methods("DELETE")
+
+	s.HandleFunc("/{id}",
+		middleware.Auth(
+			middleware.Owner(
+				posts.UpdateOne,
+				ownerarea.Post,
+			),
+		),
+	).
+		Methods("PUT")
+
+	s.HandleFunc("/{id}",
+		middleware.Auth(
+			posts.GetOnePost,
+		),
+	).
+		Methods("GET")
+
 }
