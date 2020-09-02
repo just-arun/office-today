@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	// gCtx "github.com/gorilla/context"
 	"github.com/just-arun/office-today/internals/middleware/response"
 )
 
@@ -41,6 +42,7 @@ func GetAllPost(w http.ResponseWriter, r *http.Request) {
 // GetUserPost for getting all user post
 func GetUserPost(w http.ResponseWriter, r *http.Request) {
 	// page := r.URL.Query()["page"]
+	// userID := mux.Vars(r)["id"]
 	return
 }
 
