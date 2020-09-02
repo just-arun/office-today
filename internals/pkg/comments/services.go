@@ -3,6 +3,7 @@ package comments
 import (
 	"context"
 
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/just-arun/office-today/internals/boot/collections"
@@ -35,4 +36,30 @@ func GetAllComments(filter map[string]interface{}) ([]*Comments, error) {
 	}
 
 	return comments, nil
+}
+
+// CheckOwner for bookmark
+func CheckOwner(commentID string, userID string) bool {
+	uID, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		return false
+	}
+	cID, err := primitive.ObjectIDFromHex(commentID)
+	if err != nil {
+		return false
+	}
+	var comment Comments
+	if err := collections.
+		Bookmarks().
+		FindOne(
+			context.TODO(),
+			bson.M{
+				"_id":     cID,
+				"user_id": uID,
+			},
+		).
+		Decode(&comment); err != nil {
+		return false
+	}
+	return true
 }

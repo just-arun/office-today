@@ -3,6 +3,8 @@ package tokens
 import (
 	"errors"
 	"fmt"
+	"net/http"
+	"strings"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -37,7 +39,7 @@ func GenerateToken(userID string, tokenType JWTTokenType) (string, error) {
 
 	fmt.Printf("[claims %v]: %v \n", tokenType, claims["exp"])
 
-	fmt.Printf("Access: %v, Refresh: %v \n", time.Minute * config.JWTAccessTokenTime, time.Minute * config.JWTRefreshTokenTime)
+	fmt.Printf("Access: %v, Refresh: %v \n", time.Minute*config.JWTAccessTokenTime, time.Minute*config.JWTRefreshTokenTime)
 
 	token.Claims = claims
 
@@ -74,4 +76,39 @@ func GetTokenRemainingValidity(timestamp interface{}) int {
 		fmt.Println("not ok")
 	}
 	return expireOffset
+}
+
+// GetTokenFromHeader get token from header
+func GetTokenFromHeader(r *http.Request) (string, error) {
+	authHeader := r.Header["Authorization"]
+
+	if authHeader == nil {
+		return "", errors.New("Token not found")
+	}
+
+	authHeaderArr := strings.Split(authHeader[0], " ")
+	if len(authHeaderArr) != 2 {
+		return "", errors.New("Token not found")
+	}
+	if authHeaderArr[0] != "Bearer" {
+		return "", errors.New("Token not found")
+	}
+
+	return authHeaderArr[1], nil
+}
+
+// ValidateToken validates token
+func ValidateToken(token string) (jwtClaim map[string]interface{}, valide bool) {
+	claim := jwt.MapClaims{}
+	tkn, err := jwt.ParseWithClaims(
+		token,
+		claim,
+		func(token *jwt.Token) (interface{}, error) {
+			return []byte(config.TokenSignature), nil
+		})
+	if err != nil {
+		fmt.Println("[ERROR]", err.Error())
+		return nil, false
+	}
+	return claim, tkn.Valid
 }

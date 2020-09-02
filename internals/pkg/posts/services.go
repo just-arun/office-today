@@ -1,6 +1,7 @@
 package posts
 
 import (
+	"fmt"
 	"context"
 
 	"github.com/just-arun/office-today/internals/pkg/posts/poststatus"
@@ -98,6 +99,35 @@ func GetPostComments(postID string) ([]*comments.Comments, error) {
 	}
 
 	return comment, nil
+}
+
+// CheckOwner for post
+func CheckOwner(postID string, userID string) bool {
+	pID, err := primitive.ObjectIDFromHex(postID)
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+	uID, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+	var post Posts
+	if err := collections.
+		Post().
+		FindOne(
+      context.TODO(),
+      bson.M{
+        "_id": pID,
+        "user_id": uID,
+      },
+    ).
+    Decode(&post); err != nil {
+      fmt.Println(err)
+      return false
+    }
+  return true
 }
 
 // AddCommentBookmarkLikeEnquiryID add
