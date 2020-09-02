@@ -1,8 +1,8 @@
 package posts
 
 import (
-	"fmt"
 	"context"
+	"fmt"
 
 	"github.com/just-arun/office-today/internals/pkg/posts/poststatus"
 
@@ -50,8 +50,8 @@ func GetOne(fileter bson.M) (*Posts, error) {
 	return &post, nil
 }
 
-// GetAllPost get all posts
-func GetAllPost(filter bson.M, page int) ([]*Posts, error) {
+// GetAll get all posts
+func GetAll(filter bson.M, page int) ([]*Posts, error) {
 	var posts []*Posts
 
 	option := options.Find()
@@ -117,17 +117,17 @@ func CheckOwner(postID string, userID string) bool {
 	if err := collections.
 		Post().
 		FindOne(
-      context.TODO(),
-      bson.M{
-        "_id": pID,
-        "user_id": uID,
-      },
-    ).
-    Decode(&post); err != nil {
-      fmt.Println(err)
-      return false
-    }
-  return true
+			context.TODO(),
+			bson.M{
+				"_id":     pID,
+				"user_id": uID,
+			},
+		).
+		Decode(&post); err != nil {
+		fmt.Println(err)
+		return false
+	}
+	return true
 }
 
 // AddCommentBookmarkLikeEnquiryID add

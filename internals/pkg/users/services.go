@@ -144,7 +144,7 @@ func GetUserPosts(userID string, page int) ([]*posts.Posts, error) {
 		return nil, err
 	}
 
-	userPosts, err := posts.GetAllPost(
+	userPosts, err := posts.GetAll(
 		bson.M{
 			"user_id": ID,
 		},
@@ -175,29 +175,7 @@ func GetUserComments(userID string) ([]*comments.Comments, error) {
 	return comment, nil
 }
 
-// UpdateRefreshToken update refresh token
-func UpdateRefreshToken(userID string, rToken string) error {
-	objID, err := primitive.ObjectIDFromHex(userID)
-	if err != nil {
-		return err
-	}
-	_, err = collections.User().UpdateOne(
-		context.TODO(),
-		bson.M{"_id": objID},
-		bson.M{
-			"$set": bson.M{
-				"refresh_token": rToken,
-			},
-		},
-	)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-
 // IsOwner returns boolean
 // func IsOwner(userID string) bool {
-	
+
 // }
