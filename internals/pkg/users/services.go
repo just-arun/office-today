@@ -195,3 +195,9 @@ func UpdateRefreshToken(userID string, rToken string) error {
 	}
 	return nil
 }
+
+
+// IsOwner returns boolean
+// func IsOwner(userID string) bool {
+	
+// }
