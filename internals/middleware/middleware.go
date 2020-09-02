@@ -1,8 +1,11 @@
 package middleware
 
 import (
-	"fmt"
 	"net/http"
+
+	"github.com/just-arun/office-today/internals/pkg/bookmarks"
+	"github.com/just-arun/office-today/internals/pkg/comments"
+	"github.com/just-arun/office-today/internals/pkg/posts"
 
 	"github.com/just-arun/office-today/internals/middleware/ownerarea"
 
@@ -17,6 +20,7 @@ import (
 	"github.com/just-arun/office-today/internals/util/tokens"
 
 	gCtx "github.com/gorilla/context"
+	"github.com/gorilla/mux"
 	"github.com/just-arun/office-today/internals/pkg/users/usertype"
 )
 
@@ -70,33 +74,35 @@ func Auth(next func(http.ResponseWriter, *http.Request)) func(http.ResponseWrite
 // Owner authentication of user check if the users are logedin
 func Owner(next func(http.ResponseWriter, *http.Request), ownerAccess ownerarea.OwnerArea) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// accessID := mux.Vars(r)["id"]
-		// userID := gCtx.Get(r, "uid")
-		// userType := gCtx.Get(r, "type")
-
-		// // check on user table
-		// isOwner := accessID == userID
+		accessID := mux.Vars(r)["id"]
+		userID := gCtx.Get(r, "uid").(string)
+		userType := gCtx.Get(r, "type")
 
 		switch ownerAccess {
 		case ownerarea.User:
-			fmt.Println("owner user")
-			next(w, r)
+			if accessID == userID || userType == usertype.Admin {
+				next(w, r)
+			}
 			break
 		case ownerarea.Post:
-			fmt.Println("owner post")
-			next(w, r)
+			if posts.CheckOwner(accessID, userID) || userType == usertype.Admin {
+				next(w, r)
+			}
 			break
 		case ownerarea.Like:
-			fmt.Println("owner like")
-			next(w, r)
+			if posts.CheckOwner(accessID, userID) || userType == usertype.Admin {
+				next(w, r)
+			}
 			break
 		case ownerarea.Comment:
-			fmt.Println("owner comment")
-			next(w, r)
+			if comments.CheckOwner(accessID, userID) || userType == usertype.Admin {
+				next(w, r)
+			}
 			break
 		case ownerarea.Bookmark:
-			fmt.Println("owner bookmark")
-			next(w, r)
+			if bookmarks.CheckOwner(accessID, userID) || userType == usertype.Admin {
+				next(w, r)
+			}
 			break
 		}
 		w.WriteHeader(http.StatusUnauthorized)
