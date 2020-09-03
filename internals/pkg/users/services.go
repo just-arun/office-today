@@ -175,7 +175,3 @@ func GetUserComments(userID string) ([]*comments.Comments, error) {
 	return comment, nil
 }
 
-// IsOwner returns boolean
-// func IsOwner(userID string) bool {
-
-// }

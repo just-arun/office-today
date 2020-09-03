@@ -17,7 +17,7 @@ func Posts(r *mux.Router) {
 	s := r.PathPrefix("/posts").Subrouter()
 
 	// create post
-	s.HandleFunc("/",
+	s.HandleFunc("",
 		middleware.Auth(
 			middleware.UserType(
 				posts.CreatePost,
@@ -28,18 +28,12 @@ func Posts(r *mux.Router) {
 	).
 		Methods("POST")
 
-	s.HandleFunc("/",
+	s.HandleFunc("",
 		middleware.Auth(
 			posts.GetAllPost,
 		),
 	).
 		Methods("GET")
-
-	s.HandleFunc("/user/{id}",
-		middleware.Auth(
-			posts.GetUserPost,
-		),
-	).Methods("GET")
 
 	s.HandleFunc("/my-post", middleware.Auth(
 		posts.GetMyPost,

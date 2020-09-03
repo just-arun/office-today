@@ -3,6 +3,7 @@ package posts
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/just-arun/office-today/internals/pkg/posts/poststatus"
 
@@ -17,9 +18,18 @@ import (
 )
 
 // Save posts
-func (p *Posts) Save() (string, error) {
+func (p *Posts) Save(userID string) (string, error) {
+
+	uID, err := primitive.ObjectIDFromHex(userID)
+
+	if err != nil {
+		return "", err
+	}
 
 	p.Status = poststatus.NotViewed
+	p.UserID = uID
+	p.CreatedAt = time.Now()
+	p.UpdatedAt = time.Now()
 
 	ctx := context.TODO()
 	postID, err := collections.
@@ -57,10 +67,12 @@ func GetAll(filter bson.M, page int) ([]*Posts, error) {
 	option := options.Find()
 	count := 20
 	skip := int64((page * count) - count)
-	limit := int64(count)
+	limit := int64(count * 1)
 
-	option.Skip = &skip
-	option.Limit = &limit
+	if page > 0 {
+		option.Skip = &skip
+		option.Limit = &limit
+	}
 	option.Sort = bson.M{"created_at": -1}
 
 	ctx := context.TODO()

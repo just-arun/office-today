@@ -16,7 +16,7 @@ import (
 
 type successData struct {
 	Status       int                    `json:"status"`
-	Data         map[string]interface{} `json:"data"`
+	Data         interface{} `json:"data"`
 	AccessToken  string                 `json:"accessToken,omitempty"`
 	RefreshToken string                 `json:"refreshToken,omitempty"`
 	ResetPwd     bool                   `json:"resetPwd,omitempty"`
@@ -27,7 +27,7 @@ func Success(
 	w http.ResponseWriter,
 	r *http.Request,
 	status int,
-	data map[string]interface{},
+	data interface{},
 ) {
 	var resData successData
 	resData.Status = status
