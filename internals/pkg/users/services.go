@@ -32,6 +32,10 @@ func (u *Users) Save() (string, error) {
 	u.Password = pwd
 	u.CreatedAt = time.Now().UTC()
 	u.UpdatedAt = time.Now().UTC()
+	u.Posts = []primitive.ObjectID{}
+	u.Comments = []primitive.ObjectID{}
+	u.Likes = []primitive.ObjectID{}
+	u.Bookmarks = []primitive.ObjectID{}
 	ctx := context.TODO()
 	user, err := collections.User().
 		InsertOne(ctx, u)
@@ -111,12 +115,14 @@ func GetAll(
 	var users []*Users
 
 	option := options.Find()
-	skip := int64((page * 20) - 20)
-	limit := int64(20)
+	if page > 0 {
+		skip := int64((page * 20) - 20)
+		limit := int64(20)
 
-	option.Skip = &skip
-	option.Limit = &limit
-	option.Sort = bson.D{{"createdAt", -1}}
+		option.Skip = &skip
+		option.Limit = &limit
+	}
+	option.Sort = bson.M{"createdAt": -1}
 
 	ctx := context.TODO()
 	cursor, err := collections.User().

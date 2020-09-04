@@ -30,6 +30,10 @@ func (p *Posts) Save(userID string) (string, error) {
 	p.UserID = uID
 	p.CreatedAt = time.Now()
 	p.UpdatedAt = time.Now()
+	p.CommentsID = []primitive.ObjectID{}
+	p.Comments = []comments.Comments{}
+	p.EnquiryID = []primitive.ObjectID{}
+	p.Likes = []primitive.ObjectID{}
 
 	ctx := context.TODO()
 	postID, err := collections.
@@ -38,6 +42,23 @@ func (p *Posts) Save(userID string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
+	result, err := collections.
+		User().UpdateOne(
+		context.TODO(),
+		bson.M{"_id": uID},
+		bson.M{
+			"$push": bson.M{
+				"posts": postID.InsertedID,
+			},
+		},
+	)
+
+	if err != nil {
+		return "", err
+	}
+
+	fmt.Println(result)
 
 	return postID.
 		InsertedID.(primitive.ObjectID).
