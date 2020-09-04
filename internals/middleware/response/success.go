@@ -5,10 +5,13 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/just-arun/office-today/internals/boot/config"
+
 	"github.com/just-arun/office-today/internals/boot/collections"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
+	"github.com/just-arun/office-today/internals/util/aesencryption"
 	"github.com/just-arun/office-today/internals/util/tokens"
 
 	gCtx "github.com/gorilla/context"
@@ -41,7 +44,7 @@ func Success(
 			Error(w, http.StatusInternalServerError, err.Error())
 			return
 		}
-		refresh, err := tokens.GenerateToken(id.(string), tokens.RefreshToken)
+		refresh := aesencryption.Encrypt([]byte(config.AESSecret), id.(string))
 		if err != nil {
 			Error(w, http.StatusInternalServerError, err.Error())
 			return

@@ -31,6 +31,9 @@ var (
 
 	// SendGridAPIKey
 	SendGridAPIKey string
+
+	// AESSecret for aes
+	AESSecret string
 )
 
 // getEnvValue gets value from .env file
@@ -60,5 +63,6 @@ func Init() {
 	JWTRefreshTokenTime = time.Duration(strToInt(getEnvValue("REFRESH_TOKEN_TIMING")))
 	TokenSignature = getEnvValue("TOKEN_SIGNATURE").(string)
 	SendGridAPIKey = getEnvValue("SENDGRID_API_KEY").(string)
+	AESSecret = getEnvValue("AES_SECRET").(string)
 	fmt.Printf("[DURATION], %v \n", strToInt(getEnvValue("ACCESS_TOKEN_TIMING")))
 }

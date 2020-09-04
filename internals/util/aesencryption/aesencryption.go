@@ -1,6 +1,7 @@
 package aesencryption
 
 import (
+	"log"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
@@ -9,14 +10,14 @@ import (
 	"io"
 )
 
-// encrypt string to base64 crypto using AES
-func encrypt(key []byte, text string) string {
+// Encrypt string to base64 crypto using AES
+func Encrypt(key []byte, text string) string {
 	// key := []byte(keyText)
 	plaintext := []byte(text)
 
 	block, err := aes.NewCipher(key)
 	if err != nil {
-		panic(err)
+		log.Fatalf("[Error] %v", err.Error())
 	}
 
 	// The IV needs to be unique, but not secure. Therefore it's common to
@@ -34,8 +35,8 @@ func encrypt(key []byte, text string) string {
 	return base64.URLEncoding.EncodeToString(ciphertext)
 }
 
-// decrypt from base64 to decrypted string
-func decrypt(key []byte, cryptoText string) string {
+// Decrypt from base64 to decrypted string
+func Decrypt(key []byte, cryptoText string) string {
 	ciphertext, _ := base64.URLEncoding.DecodeString(cryptoText)
 
 	block, err := aes.NewCipher(key)

@@ -1,7 +1,12 @@
 package auth
 
 import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"fmt"
 	"errors"
+
+	"github.com/just-arun/office-today/internals/boot/config"
+	"github.com/just-arun/office-today/internals/util/aesencryption"
 
 	"github.com/just-arun/office-today/internals/pkg/users/userstatus"
 	"go.mongodb.org/mongo-driver/bson"
@@ -71,7 +76,17 @@ func UpdatePasswordService() {
 
 // RefreshTokenService return refresh token
 func RefreshTokenService(token *RefreshTokenDto) (map[string]interface{}, error) {
+
+	tokenID := aesencryption.Decrypt([]byte(config.AESSecret), token.RefreshToken)
+
+	uID, err := primitive.ObjectIDFromHex(tokenID)
+	
+	if err != nil {
+		return nil, errors.New("invalided token")
+	}
+
 	user, err := users.GetOne(bson.M{
+		"_id": uID,
 		"refresh_token": token.RefreshToken,
 	})
 
