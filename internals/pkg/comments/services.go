@@ -2,6 +2,7 @@ package comments
 
 import (
 	"context"
+	"fmt"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -36,6 +37,54 @@ func GetAllComments(filter map[string]interface{}) ([]*Comments, error) {
 	}
 
 	return comments, nil
+}
+
+// Save for creating comment
+func (c *Comments) Save(userID string) (string, error) {
+	uID, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		return "", err
+	}
+	c.UserID = uID
+	result, err := collections.
+		Comment().
+		InsertOne(context.TODO(), c)
+	if err != nil {
+		return "", err
+	}
+
+	fmt.Println(c.PostID)
+
+	_, err = collections.Post().UpdateOne(
+		context.TODO(),
+		bson.M{
+			"_id": c.PostID,
+		},
+		bson.M{
+			"$push": bson.M{
+				"comments_id": result.InsertedID,
+			},
+		})
+	if err != nil {
+		return "", err
+	}
+
+	_, err = collections.User().UpdateOne(
+		context.TODO(),
+		bson.M{
+			"_id": uID,
+		},
+		bson.M{
+			"$push": bson.M{
+				"comments": result.InsertedID,
+			},
+		})
+	if err != nil {
+		return "", err
+	}
+
+	return result.InsertedID.(primitive.ObjectID).
+		Hex(), nil
 }
 
 // CheckOwner for bookmark

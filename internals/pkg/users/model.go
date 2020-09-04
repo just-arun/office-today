@@ -14,10 +14,10 @@ type Users struct {
 	UserName  string                `json:"userName,omitempty" bson:"user_name"`
 	Email     string                `json:"email,omitempty" bson:"email"`
 	Password  string                `json:"password,omitempty" bson:"password"`
-	Posts     []*primitive.ObjectID `json:"Posts,omitempty" bson:"posts"`
-	Comments  []*primitive.ObjectID `json:"comments,omitempty" bson:"comments"`
-	Likes     []*primitive.ObjectID `json:"likes,omitempty" bson:"likes,omitempty"`
-	Bookmarks []*primitive.ObjectID `json:"bookmarks,omitempty" bson:"bookmarks,omitempty"`
+	Posts     []primitive.ObjectID `json:"Posts,omitempty" bson:"posts"`
+	Comments  []primitive.ObjectID `json:"comments,omitempty" bson:"comments"`
+	Likes     []primitive.ObjectID `json:"likes,omitempty" bson:"likes"`
+	Bookmarks []primitive.ObjectID `json:"bookmarks,omitempty" bson:"bookmarks"`
 
 	RegistrationNumber       string    `json:"registrationNumber,omitempty" bson:"registration_number"`
 	Address                  string    `json:"address,omitempty" bson:"address"`

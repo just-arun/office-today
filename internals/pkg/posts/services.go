@@ -1,8 +1,9 @@
 package posts
 
 import (
-	"fmt"
 	"context"
+	"fmt"
+	"time"
 
 	"github.com/just-arun/office-today/internals/pkg/posts/poststatus"
 
@@ -17,9 +18,22 @@ import (
 )
 
 // Save posts
-func (p *Posts) Save() (string, error) {
+func (p *Posts) Save(userID string) (string, error) {
+
+	uID, err := primitive.ObjectIDFromHex(userID)
+
+	if err != nil {
+		return "", err
+	}
 
 	p.Status = poststatus.NotViewed
+	p.UserID = uID
+	p.CreatedAt = time.Now()
+	p.UpdatedAt = time.Now()
+	p.CommentsID = []primitive.ObjectID{}
+	p.Comments = []comments.Comments{}
+	p.EnquiryID = []primitive.ObjectID{}
+	p.Likes = []primitive.ObjectID{}
 
 	ctx := context.TODO()
 	postID, err := collections.
@@ -28,6 +42,23 @@ func (p *Posts) Save() (string, error) {
 	if err != nil {
 		return "", err
 	}
+
+	result, err := collections.
+		User().UpdateOne(
+		context.TODO(),
+		bson.M{"_id": uID},
+		bson.M{
+			"$push": bson.M{
+				"posts": postID.InsertedID,
+			},
+		},
+	)
+
+	if err != nil {
+		return "", err
+	}
+
+	fmt.Println(result)
 
 	return postID.
 		InsertedID.(primitive.ObjectID).
@@ -50,17 +81,19 @@ func GetOne(fileter bson.M) (*Posts, error) {
 	return &post, nil
 }
 
-// GetAllPost get all posts
-func GetAllPost(filter bson.M, page int) ([]*Posts, error) {
-	var posts []*Posts
+// GetAll get all posts
+func GetAll(filter bson.M, page int) ([]Posts, error) {
+	var posts []Posts
 
 	option := options.Find()
 	count := 20
 	skip := int64((page * count) - count)
-	limit := int64(count)
+	limit := int64(count * 1)
 
-	option.Skip = &skip
-	option.Limit = &limit
+	if page > 0 {
+		option.Skip = &skip
+		option.Limit = &limit
+	}
 	option.Sort = bson.M{"created_at": -1}
 
 	ctx := context.TODO()
@@ -80,7 +113,7 @@ func GetAllPost(filter bson.M, page int) ([]*Posts, error) {
 			return nil, err
 		}
 
-		posts = append(posts, &post)
+		posts = append(posts, post)
 	}
 
 	return posts, nil
@@ -117,17 +150,65 @@ func CheckOwner(postID string, userID string) bool {
 	if err := collections.
 		Post().
 		FindOne(
-      context.TODO(),
-      bson.M{
-        "_id": pID,
-        "user_id": uID,
-      },
-    ).
-    Decode(&post); err != nil {
-      fmt.Println(err)
-      return false
-    }
-  return true
+			context.TODO(),
+			bson.M{
+				"_id":     pID,
+				"user_id": uID,
+			},
+		).
+		Decode(&post); err != nil {
+		fmt.Println("[err]", err.Error())
+		return false
+	}
+	return true
+}
+
+// DeleteOne for deleting one post
+func DeleteOne(postID string) (int64, error) {
+	pID, err := primitive.ObjectIDFromHex(postID)
+	if err != nil {
+		return 0, err
+	}
+
+	result, err := collections.
+		Post().
+		DeleteOne(
+			context.TODO(),
+			bson.M{
+				"_id": pID,
+			},
+		)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return result.DeletedCount, nil
+}
+
+// EditPost for editing post
+func (p *EditPostDto) EditPost(postID string) (*Posts, error) {
+	pID, err := primitive.ObjectIDFromHex(postID)
+	if err != nil {
+		return nil, err
+	}
+	var post Posts
+	result := collections.
+		Post().
+		FindOneAndUpdate(
+			context.TODO(),
+			bson.M{
+				"_id": pID,
+			},
+			bson.M{
+				"$set": p,
+			},
+		)
+	if err = result.Decode(&post); err != nil {
+		return nil, err
+	}
+
+	return &post, nil
 }
 
 // AddCommentBookmarkLikeEnquiryID add

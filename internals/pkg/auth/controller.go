@@ -54,7 +54,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		response.Error(w, http.StatusForbidden, err.Error())
 		return
-  }
+	}
 	fmt.Println("[ID]", result["_id"], err)
 
 	gCtx.Set(r, "refresh", true)
@@ -89,19 +89,20 @@ func RefreshToken(w http.ResponseWriter, r *http.Request) {
 		response.Error(w, http.StatusForbidden, err.Error())
 		return
 	}
+	fmt.Println("[token]", token)
 	tokenData, err := RefreshTokenService(&token)
 	if err != nil {
 		response.Error(w, http.StatusForbidden, err.Error())
 		return
-  }
-  
+	}
+
 	gCtx.Set(r, "refresh", true)
 	gCtx.Set(r, "uid", tokenData["uid"])
-  
-  response.Success(
-    w, r,
-    http.StatusOK,
-    map[string]interface{}{
-    "ok": 1,
-  })
+
+	response.Success(
+		w, r,
+		http.StatusOK,
+		map[string]interface{}{
+			"ok": 1,
+		})
 }

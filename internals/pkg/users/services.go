@@ -32,6 +32,10 @@ func (u *Users) Save() (string, error) {
 	u.Password = pwd
 	u.CreatedAt = time.Now().UTC()
 	u.UpdatedAt = time.Now().UTC()
+	u.Posts = []primitive.ObjectID{}
+	u.Comments = []primitive.ObjectID{}
+	u.Likes = []primitive.ObjectID{}
+	u.Bookmarks = []primitive.ObjectID{}
 	ctx := context.TODO()
 	user, err := collections.User().
 		InsertOne(ctx, u)
@@ -111,12 +115,14 @@ func GetAll(
 	var users []*Users
 
 	option := options.Find()
-	skip := int64((page * 20) - 20)
-	limit := int64(20)
+	if page > 0 {
+		skip := int64((page * 20) - 20)
+		limit := int64(20)
 
-	option.Skip = &skip
-	option.Limit = &limit
-	option.Sort = bson.D{{"createdAt", -1}}
+		option.Skip = &skip
+		option.Limit = &limit
+	}
+	option.Sort = bson.M{"createdAt": -1}
 
 	ctx := context.TODO()
 	cursor, err := collections.User().
@@ -136,7 +142,7 @@ func GetAll(
 }
 
 // GetUserPosts get all user posts
-func GetUserPosts(userID string, page int) ([]*posts.Posts, error) {
+func GetUserPosts(userID string, page int) ([]posts.Posts, error) {
 
 	ID, err := primitive.ObjectIDFromHex(userID)
 
@@ -144,7 +150,7 @@ func GetUserPosts(userID string, page int) ([]*posts.Posts, error) {
 		return nil, err
 	}
 
-	userPosts, err := posts.GetAllPost(
+	userPosts, err := posts.GetAll(
 		bson.M{
 			"user_id": ID,
 		},
@@ -174,30 +180,3 @@ func GetUserComments(userID string) ([]*comments.Comments, error) {
 
 	return comment, nil
 }
-
-// UpdateRefreshToken update refresh token
-func UpdateRefreshToken(userID string, rToken string) error {
-	objID, err := primitive.ObjectIDFromHex(userID)
-	if err != nil {
-		return err
-	}
-	_, err = collections.User().UpdateOne(
-		context.TODO(),
-		bson.M{"_id": objID},
-		bson.M{
-			"$set": bson.M{
-				"refresh_token": rToken,
-			},
-		},
-	)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-
-// IsOwner returns boolean
-// func IsOwner(userID string) bool {
-	
-// }
