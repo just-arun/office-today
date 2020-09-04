@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/just-arun/office-today/internals/pkg/bookmarks"
@@ -78,32 +79,34 @@ func Owner(next func(http.ResponseWriter, *http.Request), ownerAccess ownerarea.
 		userID := gCtx.Get(r, "uid").(string)
 		userType := gCtx.Get(r, "type")
 
+		fmt.Printf("owner type %v \n", userType)
+
 		switch ownerAccess {
 		case ownerarea.User:
 			if accessID == userID || userType == usertype.Admin {
 				next(w, r)
+				return
 			}
-			break
 		case ownerarea.Post:
 			if posts.CheckOwner(accessID, userID) || userType == usertype.Admin {
 				next(w, r)
+				return
 			}
-			break
 		case ownerarea.Like:
 			if posts.CheckOwner(accessID, userID) || userType == usertype.Admin {
 				next(w, r)
+				return
 			}
-			break
 		case ownerarea.Comment:
 			if comments.CheckOwner(accessID, userID) || userType == usertype.Admin {
 				next(w, r)
+				return
 			}
-			break
 		case ownerarea.Bookmark:
 			if bookmarks.CheckOwner(accessID, userID) || userType == usertype.Admin {
 				next(w, r)
+				return
 			}
-			break
 		}
 		w.WriteHeader(http.StatusUnauthorized)
 	}

@@ -46,12 +46,23 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 
 // UpdateOne for updating post
 func UpdateOne(w http.ResponseWriter, r *http.Request) {
-	// postID := mux.Vars(r)["id"]
-	var post Posts
-	if err := json.NewDecoder(r.Body).Decode(&post); err != nil {
+	postID := mux.Vars(r)["id"]
+	var editPost EditPostDto
+	if err := json.NewDecoder(r.Body).Decode(&editPost); err != nil {
 		response.Error(w, http.StatusBadGateway, err.Error())
 		return
 	}
+
+	result, err := editPost.EditPost(postID)
+	if err != nil {
+		response.Error(w, http.StatusBadGateway, err.Error())
+		return
+	}
+	response.Success(w, r,
+		http.StatusOK,
+		result,
+	)
+	return
 }
 
 // GetOnePost for getting one post
@@ -123,15 +134,20 @@ func GetAllPost(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-// GetMyPost for getting all my post
-func GetMyPost(w http.ResponseWriter, r *http.Request) {
-	// page := r.URL.Query()["page"]
-	// userID := gCtx.Get(r)["uid"]
-	return
-}
-
 //DisablePost for disable user post
 func DisablePost(w http.ResponseWriter, r *http.Request) {
-	// postID := mux.Vars(r)["id"]
+	postID := mux.Vars(r)["id"]
+	result, err := DeleteOne(postID)
+	if err != nil {
+		response.Error(w, http.StatusUnprocessableEntity, err.Error())
+		return
+	}
+
+	response.Success(w, r,
+		http.StatusOK,
+		map[string]interface{}{
+			"deleted": result,
+		},
+	)
 	return
 }

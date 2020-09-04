@@ -136,7 +136,7 @@ func GetAll(
 }
 
 // GetUserPosts get all user posts
-func GetUserPosts(userID string, page int) ([]*posts.Posts, error) {
+func GetUserPosts(userID string, page int) ([]posts.Posts, error) {
 
 	ID, err := primitive.ObjectIDFromHex(userID)
 
@@ -174,4 +174,3 @@ func GetUserComments(userID string) ([]*comments.Comments, error) {
 
 	return comment, nil
 }
-

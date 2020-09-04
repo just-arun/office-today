@@ -61,8 +61,8 @@ func GetOne(fileter bson.M) (*Posts, error) {
 }
 
 // GetAll get all posts
-func GetAll(filter bson.M, page int) ([]*Posts, error) {
-	var posts []*Posts
+func GetAll(filter bson.M, page int) ([]Posts, error) {
+	var posts []Posts
 
 	option := options.Find()
 	count := 20
@@ -92,7 +92,7 @@ func GetAll(filter bson.M, page int) ([]*Posts, error) {
 			return nil, err
 		}
 
-		posts = append(posts, &post)
+		posts = append(posts, post)
 	}
 
 	return posts, nil
@@ -136,10 +136,58 @@ func CheckOwner(postID string, userID string) bool {
 			},
 		).
 		Decode(&post); err != nil {
-		fmt.Println(err)
+		fmt.Println("[err]", err.Error())
 		return false
 	}
 	return true
+}
+
+// DeleteOne for deleting one post
+func DeleteOne(postID string) (int64, error) {
+	pID, err := primitive.ObjectIDFromHex(postID)
+	if err != nil {
+		return 0, err
+	}
+
+	result, err := collections.
+		Post().
+		DeleteOne(
+			context.TODO(),
+			bson.M{
+				"_id": pID,
+			},
+		)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return result.DeletedCount, nil
+}
+
+// EditPost for editing post
+func (p *EditPostDto) EditPost(postID string) (*Posts, error) {
+	pID, err := primitive.ObjectIDFromHex(postID)
+	if err != nil {
+		return nil, err
+	}
+	var post Posts
+	result := collections.
+		Post().
+		FindOneAndUpdate(
+			context.TODO(),
+			bson.M{
+				"_id": pID,
+			},
+			bson.M{
+				"$set": p,
+			},
+		)
+	if err = result.Decode(&post); err != nil {
+		return nil, err
+	}
+
+	return &post, nil
 }
 
 // AddCommentBookmarkLikeEnquiryID add

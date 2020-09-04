@@ -35,11 +35,6 @@ func Posts(r *mux.Router) {
 	).
 		Methods("GET")
 
-	s.HandleFunc("/my-post", middleware.Auth(
-		posts.GetMyPost,
-	)).
-		Methods("GET")
-
 	s.HandleFunc("/{id}",
 		middleware.Auth(
 			middleware.Owner(

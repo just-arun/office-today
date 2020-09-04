@@ -15,11 +15,11 @@ import (
 )
 
 type successData struct {
-	Status       int                    `json:"status"`
+	Status       int         `json:"status"`
 	Data         interface{} `json:"data"`
-	AccessToken  string                 `json:"accessToken,omitempty"`
-	RefreshToken string                 `json:"refreshToken,omitempty"`
-	ResetPwd     bool                   `json:"resetPwd,omitempty"`
+	AccessToken  string      `json:"accessToken,omitempty"`
+	RefreshToken string      `json:"refreshToken,omitempty"`
+	ResetPwd     bool        `json:"resetPwd,omitempty"`
 }
 
 // Success response
