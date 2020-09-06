@@ -1,13 +1,10 @@
 package config
 
 import (
-	"strconv"
 	"fmt"
-	"log"
 	"os"
+	"strconv"
 	"time"
-
-	"github.com/joho/godotenv"
 )
 
 var (
@@ -44,10 +41,10 @@ var (
 
 // getEnvValue gets value from .env file
 func getEnvValue(key string) interface{} {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	// err := godotenv.Load()
+	// if err != nil {
+	// 	log.Fatal("Error loading .env file")
+	// }
 	return string(os.Getenv(key))
 }
 
@@ -58,7 +55,7 @@ func Init() {
 		if err != nil {
 			panic(err)
 		}
-		fmt.Printf("FORMATING: %v \t %v",s, strInt)
+		fmt.Printf("FORMATING: %v \t %v", s, strInt)
 		return strInt
 	}
 
