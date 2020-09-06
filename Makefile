@@ -14,7 +14,7 @@ build:
 	mv office-today ./bin
 
 run:
-	./main
+	./bin/office-today
 
 clear:
 	rm -rf ./main
