@@ -1,12 +1,18 @@
 package auth
 
 import (
+	"context"
 	"errors"
+	"fmt"
+	"math/rand"
+
+	"github.com/just-arun/office-today/internals/boot/collections"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"github.com/just-arun/office-today/internals/boot/config"
 	"github.com/just-arun/office-today/internals/util/aesencryption"
+	"github.com/just-arun/office-today/internals/util/message"
 
 	"github.com/just-arun/office-today/internals/pkg/users/userstatus"
 	"go.mongodb.org/mongo-driver/bson"
@@ -60,8 +66,36 @@ func LoginService(login *LoginDto) (map[string]interface{}, error) {
 }
 
 // ForgotPasswordService password status set
-func ForgotPasswordService() {
+func ForgotPasswordService(email string) error {
 
+	otp := rand.Intn(999999)
+
+	_, err := collections.
+		User().
+		UpdateOne(context.TODO(),
+			bson.M{"email": email},
+			bson.M{
+				"$set": bson.M{
+					"otp": otp,
+				},
+			})
+	if err != nil {
+		if err != nil {
+			fmt.Println("error", err.Error())
+			return err
+		}
+		return err
+	}
+
+	msg := "OTP:" + fmt.Sprint(otp) + " for loggin to office today app "
+
+	err = message.Mail("arunberry47@gmail.com", msg)
+	fmt.Println(msg)
+	if err != nil {
+		fmt.Println("error", err.Error())
+		return err
+	}
+	return nil
 }
 
 // ResetPasswordService reset password

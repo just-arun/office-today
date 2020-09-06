@@ -91,7 +91,7 @@ func GetTokenFromHeader(r *http.Request) (string, error) {
 		return "", errors.New("Token not found")
 	}
 	if authHeaderArr[0] != "Bearer" {
-		return "", errors.New("Token not found")
+		return "", errors.New("Token not valied")
 	}
 
 	return authHeaderArr[1], nil

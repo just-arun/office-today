@@ -14,7 +14,7 @@ require (
 	github.com/sendgrid/rest v2.6.1+incompatible
 	github.com/sendgrid/sendgrid-go v3.6.2+incompatible
 	github.com/stretchr/testify v1.4.0
-	go.mongodb.org/mongo-driver v1.4.0
+	go.mongodb.org/mongo-driver v1.4.1
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 	golang.org/x/text v0.3.3
 	golang.org/x/tools/gopls v0.4.4 // indirect

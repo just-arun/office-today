@@ -11,3 +11,8 @@ type LoginDto struct {
 type RefreshTokenDto struct {
 	RefreshToken string `json:"refreshToken"`
 }
+
+// ForgotPasswordDto for getting email
+type ForgotPasswordDto struct {
+	Email string `json:"email"`
+}

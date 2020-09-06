@@ -69,7 +69,23 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 // ForgotPassword password status set
 func ForgotPassword(w http.ResponseWriter, r *http.Request) {
-	io.WriteString(w, "forgot password shit")
+	var forGotPwd ForgotPasswordDto
+	if err := json.NewDecoder(r.Body).Decode(&forGotPwd); err != nil {
+		response.Error(w, http.StatusBadGateway, err.Error())
+		return
+	}
+	err := ForgotPasswordService(forGotPwd.Email)
+	if err != nil {
+		response.Error(w, http.StatusBadGateway, err.Error())
+		return
+	}
+	response.Success(w, r,
+		http.StatusOK,
+		map[string]interface{}{
+			"ok": 1,
+		},
+	)
+	return
 }
 
 // ResetPassword reset password
