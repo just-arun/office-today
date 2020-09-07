@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/just-arun/office-today/internals/pkg/comments"
+
 	"github.com/just-arun/office-today/internals/pkg/posts/poststatus"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -148,6 +150,25 @@ func DisablePost(w http.ResponseWriter, r *http.Request) {
 		map[string]interface{}{
 			"deleted": result,
 		},
+	)
+	return
+}
+
+// GetComments for getting poocomments
+func GetComments(w http.ResponseWriter, r *http.Request) {
+	postID := mux.Vars(r)["id"]
+
+	var postComments []*comments.Comments
+	err := GetPostComments(postID, postComments)
+
+	if err != nil {
+		response.Error(w, http.StatusUnprocessableEntity, err.Error())
+		return
+	}
+
+	response.Success(w, r,
+		http.StatusOK,
+		postComments,
 	)
 	return
 }

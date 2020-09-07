@@ -25,7 +25,6 @@ func main() {
 	routes.Users(r)
 	routes.Posts(r)
 	routes.Comments(r)
-	fmt.Println("running on heroku...")
 
 	fmt.Printf("server started at port http://localhost%v\n", config.Port)
 	log.Fatal(http.ListenAndServe(config.Port, r), "server terminated")
