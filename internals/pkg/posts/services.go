@@ -120,18 +120,18 @@ func GetAll(filter bson.M, page int) ([]Posts, error) {
 }
 
 // GetPostComments get all posts comments
-func GetPostComments(postID string) ([]*comments.Comments, error) {
+func GetPostComments(postID string, comment []*comments.Comments) error {
 	ID, err := primitive.ObjectIDFromHex(postID)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	comment, err := comments.GetAllComments(bson.M{"post_id": ID})
+	err = comments.GetAllCommentsService(bson.M{"post_id": ID}, comment)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return comment, nil
+	return nil
 }
 
 // CheckOwner for post

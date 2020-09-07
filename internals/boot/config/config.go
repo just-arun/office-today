@@ -1,10 +1,10 @@
 package config
 
 import (
-	"strconv"
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -34,6 +34,12 @@ var (
 
 	// AESSecret for aes
 	AESSecret string
+
+	// MailName for email name
+	MailName string
+
+	// MailPass for email pass
+	MailPass string
 )
 
 // getEnvValue gets value from .env file
@@ -52,7 +58,7 @@ func Init() {
 		if err != nil {
 			panic(err)
 		}
-		fmt.Printf("FORMATING: %v \t %v",s, strInt)
+		fmt.Printf("FORMATING: %v \t %v", s, strInt)
 		return strInt
 	}
 
@@ -64,5 +70,7 @@ func Init() {
 	TokenSignature = getEnvValue("TOKEN_SIGNATURE").(string)
 	SendGridAPIKey = getEnvValue("SENDGRID_API_KEY").(string)
 	AESSecret = getEnvValue("AES_SECRET").(string)
+	MailName = getEnvValue("EMAIL").(string)
+	MailPass = getEnvValue("PASSWORD").(string)
 	fmt.Printf("[DURATION], %v \n", strToInt(getEnvValue("ACCESS_TOKEN_TIMING")))
 }

@@ -11,10 +11,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-// GetAllComments all comments for the post
-func GetAllComments(filter map[string]interface{}) ([]*Comments, error) {
-
-	var comments []*Comments
+// GetAllCommentsService all comments for the post
+func GetAllCommentsService(filter map[string]interface{}, comments []*Comments) error {
 	option := options.Find()
 	option.Sort = bson.M{"created_at": -1}
 	ctx := context.TODO()
@@ -24,19 +22,19 @@ func GetAllComments(filter map[string]interface{}) ([]*Comments, error) {
 		Find(ctx, filter, option)
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	for cursor.Next(context.TODO()) {
 		var comment *Comments
 		err := cursor.Decode(&comment)
 		if err != nil {
-			return nil, err
+			return err
 		}
 		comments = append(comments, comment)
 	}
 
-	return comments, nil
+	return nil
 }
 
 // Save for creating comment
@@ -111,4 +109,64 @@ func CheckOwner(commentID string, userID string) bool {
 		return false
 	}
 	return true
+}
+
+// DeleteCommentService for
+func DeleteCommentService(id string) error {
+
+	cID, err := primitive.ObjectIDFromHex(id)
+
+	if err != nil {
+		return err
+	}
+
+	commentFilter := bson.M{"_id": cID}
+
+	var comment Comments
+
+	if err := collections.
+		Comment().
+		FindOneAndDelete(context.TODO(), commentFilter).
+		Decode(&comment); err != nil {
+		return err
+	}
+
+	postFilter := bson.M{"_id": comment.PostID}
+	postCommentData := bson.M{
+		"$pull": bson.M{
+			"comments_id": comment.ID,
+		},
+	}
+
+	_, err = collections.
+		User().
+		UpdateOne(
+			context.TODO(),
+			postFilter,
+			postCommentData,
+    )
+
+  if err != nil {
+    return err
+  }
+
+  userFilter := bson.M{"_id": comment.UserID}
+  userFilterData := bson.M{
+    "$pull": bson.M{
+      "comments": comment.ID,
+    },
+  }
+
+  _, err = collections.
+    User().
+    UpdateOne(
+      context.TODO(),
+      userFilter,
+      userFilterData,
+    )
+  if err != nil {
+    return err
+  }
+
+	return nil
 }
