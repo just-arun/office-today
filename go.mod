@@ -7,6 +7,7 @@ require (
 	github.com/cespare/reflex v0.3.0 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-playground/validator/v10 v10.3.0
+	github.com/gogo/protobuf v1.3.1 // indirect
 	github.com/gorilla/context v1.1.1
 	github.com/gorilla/mux v1.7.4
 	github.com/hashicorp/hcl v1.0.0 // indirect

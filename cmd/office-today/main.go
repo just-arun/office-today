@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/just-arun/office-today/internals/boot/database"
 
@@ -26,7 +27,20 @@ func main() {
 	routes.Posts(r)
 	routes.Comments(r)
 	routes.Fileupload(r)
+	routes.StaticFile(r)
 
-	fmt.Printf("server started at port http://localhost%v\n", config.Port)
-	log.Fatal(http.ListenAndServe(config.Port, r), "server terminated")
+	port := fmt.Sprintf("127.0.0.1%v", config.Port)
+
+	fmt.Printf("server started at port http://%v\n", port)
+
+	fmt.Println(port)
+
+	srv := &http.Server{
+		Handler:      r,
+		Addr:         port,
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
+	}
+
+	log.Fatal(srv.ListenAndServe(), "server terminated")
 }

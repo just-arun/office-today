@@ -9,7 +9,7 @@ import (
 
 // Fileupload for uploading file
 func Fileupload(r *mux.Router) {
-	fmt.Println("File upload route registered...")
+	fmt.Println("FileUpload route registered...")
 	s := r.PathPrefix("/file-upload").Subrouter()
 
 	s.HandleFunc(

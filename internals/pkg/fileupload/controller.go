@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 
 	"github.com/just-arun/office-today/internals/middleware/response"
 )
@@ -35,6 +36,7 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 	}
+
 	defer tempFile.Close()
 
 	// read all of the contents of our uploaded file into a
@@ -46,9 +48,13 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 	// write this byte array to our temporary file
 	tempFile.Write(fileBytes)
 	// return that we have successfully uploaded our file!
+
+	fileName := strings.Replace(tempFile.Name(), "images", "static", 1)
 	response.Success(
 		w, r,
 		http.StatusOK,
-		"Successfully Uploaded File\n",
+		map[string]interface{}{
+			"url": fileName,
+		},
 	)
 }
