@@ -145,3 +145,31 @@ func AddBookmark(w http.ResponseWriter, r *http.Request) {
 }
 
 
+
+// RemoveBookmark for adding to bookmark
+func RemoveBookmark(w http.ResponseWriter, r *http.Request) {
+	uID := mux.Vars(r)["id"]
+	var bookmark Bookmark
+	if err := json.NewDecoder(r.Body).Decode(&bookmark); err != nil {
+		response.Error(w, http.StatusBadGateway, err.Error())
+		return
+	}
+
+	err := RemoveBookmarkService(uID, bookmark.ID)
+
+	if err != nil {
+		response.Error(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	response.Success(
+		w, r,
+		http.StatusOK,
+		map[string]interface{}{
+			"ok": 1,
+		},
+	)
+	return
+}
+
+

@@ -233,3 +233,24 @@ func AddBookmarkService(userID string, postID primitive.ObjectID) error {
 	fmt.Println(result)
 	return nil
 }
+
+// RemoveBookmarkService for adding bookmark
+func RemoveBookmarkService(userID string, postID primitive.ObjectID) error {
+	uID, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		return err
+	}
+	result, err := collections.
+		User().UpdateOne(
+		context.TODO(),
+		bson.M{"_id": uID}, bson.M{
+			"$pull": bson.M{
+				"bookmarks": postID,
+			},
+		})
+	if err != nil {
+		return err
+	}
+	fmt.Println(result)
+	return nil
+}
