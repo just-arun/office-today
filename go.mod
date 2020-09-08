@@ -1,5 +1,6 @@
 module github.com/just-arun/office-today
 
+varsion 1.0
 go 1.12
 
 require (
