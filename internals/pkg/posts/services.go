@@ -212,7 +212,12 @@ func (p *EditPostDto) EditPost(postID string) (*Posts, error) {
 }
 
 // AddLikeService for like post
-func AddLikeService(postID string, userID primitive.ObjectID) error {
+func AddLikeService(postID string, userID string) error {
+	uID, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		return err
+	}
+
 	pID, err := primitive.ObjectIDFromHex(postID)
 	if err != nil {
 		return err
@@ -224,7 +229,7 @@ func AddLikeService(postID string, userID primitive.ObjectID) error {
 		},
 		bson.M{
 			"$addToSet": bson.M{
-				"likes": userID,
+				"likes": uID,
 			},
 		},
 	)
@@ -236,7 +241,7 @@ func AddLikeService(postID string, userID primitive.ObjectID) error {
 	_, err = collections.User().UpdateOne(
 		context.TODO(),
 		bson.M{
-			"_id": userID,
+			"_id": uID,
 		},
 		bson.M{
 			"$addToSet": bson.M{
