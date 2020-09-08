@@ -40,10 +40,18 @@ func Users(r *mux.Router) {
 	).
     Methods("POST")
     
-  s.HandleFunc("posts",
+  s.HandleFunc("/{id}/posts/add",
     middleware.Auth(
       middleware.Owner(
         users.AddBookmark,
+      )
+    )
+  ).Methods("POST")
+
+  s.HandleFunc("/{id}/posts/remove",
+    middleware.Auth(
+      middleware.Owner(
+        users.RemoveBookmark,
       )
     )
   ).Methods("POST")
