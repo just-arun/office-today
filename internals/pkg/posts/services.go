@@ -256,3 +256,51 @@ func AddLikeService(postID string, userID string) error {
 
 	return nil
 }
+
+
+
+// RemoveLikeService for like post
+func RemoveLikeService(postID string, userID string) error {
+	uID, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		return err
+	}
+
+	pID, err := primitive.ObjectIDFromHex(postID)
+	if err != nil {
+		return err
+	}
+	_, err = collections.Post().UpdateOne(
+		context.TODO(),
+		bson.M{
+			"_id": pID,
+		},
+		bson.M{
+			"$pull": bson.M{
+				"likes": uID,
+			},
+		},
+	)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = collections.User().UpdateOne(
+		context.TODO(),
+		bson.M{
+			"_id": uID,
+		},
+		bson.M{
+			"$pull": bson.M{
+				"likes": pID,
+			},
+		},
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

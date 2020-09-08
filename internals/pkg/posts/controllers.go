@@ -192,3 +192,23 @@ func AddLike(w http.ResponseWriter, r *http.Request) {
 	)
 	return
 }
+
+// RemoveLike for adding like
+func RemoveLike(w http.ResponseWriter, r *http.Request) {
+	pID := mux.Vars(r)["id"]
+	uID := gCtx.Get(r, "uid").(string)
+
+	err := RemoveLikeService(pID, uID)
+	if err != nil {
+		response.Error(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	response.Success(w, r,
+		http.StatusOK,
+		map[string]interface{}{
+			"ok": 1,
+		},
+	)
+	return
+}

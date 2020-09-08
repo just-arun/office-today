@@ -68,4 +68,10 @@ func Posts(r *mux.Router) {
 		),
 	).Methods("POST")
 
+	s.HandleFunc("/{id}/removelike",
+		middleware.Auth(
+			posts.RemoveLike,
+		),
+	).Methods("POST")
+
 }
