@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/just-arun/office-today/internals/middleware/response"
+	"github.com/just-arun/office-today/internals/pkg/comments"
 	"go.mongodb.org/mongo-driver/bson"
 
 	"github.com/gorilla/mux"
@@ -38,6 +39,23 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 	response.Success(w, r,
 		http.StatusOK,
 		user,
+	)
+	return
+}
+
+// GetComments for getting user comments
+func GetComments(w http.ResponseWriter, r *http.Request) {
+	uID := mux.Vars(r)["id"]
+	var comment []*comments.Comments
+	err := GetUserComments(uID, comment)
+	if err != nil {
+		response.Error(w, http.StatusBadGateway, err.Error())
+		return
+	}
+	response.Success(
+		w, r,
+		http.StatusOK,
+		comment,
 	)
 	return
 }

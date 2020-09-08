@@ -165,18 +165,19 @@ func GetUserPosts(userID string, page int) ([]posts.Posts, error) {
 }
 
 // GetUserComments get all users posts
-func GetUserComments(userID string) ([]*comments.Comments, error) {
+func GetUserComments(userID string, comment []*comments.Comments) error {
 	ID, err := primitive.ObjectIDFromHex(userID)
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	comment, err := comments.GetAllComments(bson.M{"user_id": ID})
+	err = comments.
+		GetAllCommentsService(bson.M{"user_id": ID}, comment)
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return comment, nil
+	return nil
 }
