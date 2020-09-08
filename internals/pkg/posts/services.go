@@ -211,29 +211,43 @@ func (p *EditPostDto) EditPost(postID string) (*Posts, error) {
 	return &post, nil
 }
 
-// AddCommentBookmarkLikeEnquiryID add
-// comment bookmark like and enquires
-// func AddCommentBookmarkLikeEnquiryID(
-//     postID string,
-//     update bson.M,
-//   ) (
-//       interface{},
-//       error,
-//     ) {
-// 	ID, err := primitive.ObjectIDFromHex(postID)
-// 	if err != nil {
-// 		return nil, err
-//   }
+// AddLikeService for like post
+func AddLikeService(postID string, userID primitive.ObjectID) error {
+	pID, err := primitive.ObjectIDFromHex(postID)
+	if err != nil {
+		return err
+	}
+	_, err = collections.Post().UpdateOne(
+		context.TODO(),
+		bson.M{
+			"_id": pID,
+		},
+		bson.M{
+			"$addToSet": bson.M{
+				"likes": userID,
+			},
+		},
+	)
 
-//   filter := bson.M{ "_id": ID }
+	if err != nil {
+		return err
+	}
 
-//   result, err := collections.
-//     Post().
-//     UpdateOne(
-//       context.TODO(),
-//      filter,
+	_, err = collections.User().UpdateOne(
+		context.TODO(),
+		bson.M{
+			"_id": userID,
+		},
+		bson.M{
+			"$addToSet": bson.M{
+				"likes": pID,
+			},
+		},
+	)
 
-//     )
+	if err != nil {
+		return err
+	}
 
-//   return nil, nil
-// }
+	return nil
+}

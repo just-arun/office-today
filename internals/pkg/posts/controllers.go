@@ -172,3 +172,26 @@ func GetComments(w http.ResponseWriter, r *http.Request) {
 	)
 	return
 }
+
+// AddLike for adding like
+func AddLike(w http.ResponseWriter, r *http.Request) {
+	pID := mux.Vars(r)["id"]
+	var like LikePostStruct
+	if err := json.NewDecoder(r.Body).Decode(&like); err != nil {
+		response.Error(w, http.StatusUnprocessableEntity, err.Error())
+		return
+	}
+	err := AddLikeService(pID, like.UserID)
+	if err != nil {
+		response.Error(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	response.Success(w, r,
+		http.StatusOK,
+		map[string]interface{}{
+			"ok": 1,
+		},
+	)
+	return
+}
