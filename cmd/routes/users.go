@@ -38,5 +38,13 @@ func Users(r *mux.Router) {
 			),
 		),
 	).
-		Methods("POST")
+    Methods("POST")
+    
+  s.HandleFunc("posts",
+    middleware.Auth(
+      middleware.Owner(
+        users.AddBookmark,
+      )
+    )
+  ).Methods("POST")
 }

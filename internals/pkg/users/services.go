@@ -212,3 +212,24 @@ func CreateUserService(user Users) (string, error) {
 	}
 	return ID.InsertedID.(primitive.ObjectID).Hex(), nil
 }
+
+// AddBookmarkService for adding bookmark
+func AddBookmarkService(userID string, postID primitive.ObjectID) error {
+	uID, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		return err
+	}
+	result, err := collections.
+		User().UpdateOne(
+		context.TODO(),
+		bson.M{"_id": uID}, bson.M{
+			"$addToSet": bson.M{
+				"bookmarks": postID,
+			},
+		})
+	if err != nil {
+		return err
+	}
+	fmt.Println(result)
+	return nil
+}

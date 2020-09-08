@@ -8,6 +8,11 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+// Bookmark for adding removing bookmark
+type Bookmark struct {
+	ID primitive.ObjectID `json:"id",bson:"id"`
+}
+
 // Users model
 type Users struct {
 	ID        primitive.ObjectID   `json:"id,omitempty" bson:"_id,omitempty"`

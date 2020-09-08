@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/just-arun/office-today/internals/pkg/bookmarks"
 	"github.com/just-arun/office-today/internals/pkg/comments"
 	"github.com/just-arun/office-today/internals/pkg/posts"
 
@@ -102,11 +101,7 @@ func Owner(next func(http.ResponseWriter, *http.Request), ownerAccess ownerarea.
 				next(w, r)
 				return
 			}
-		case ownerarea.Bookmark:
-			if bookmarks.CheckOwner(accessID, userID) || userType == usertype.Admin {
-				next(w, r)
-				return
-			}
+
 		}
 		w.WriteHeader(http.StatusUnauthorized)
 	}
