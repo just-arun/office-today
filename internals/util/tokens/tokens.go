@@ -55,7 +55,6 @@ func DecodeJWTToken(tokenString string) (token interface{}, clain map[string]int
 	})
 
 	if err != nil || !tok.Valid {
-		fmt.Println("{err}", err.Error())
 		return nil, nil, errors.New("Token is not valid")
 	}
 

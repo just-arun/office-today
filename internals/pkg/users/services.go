@@ -3,6 +3,7 @@ package users
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/just-arun/office-today/internals/util/password"
@@ -62,6 +63,27 @@ func Update(
 		return nil, err
 	}
 	return result.UpsertedID, err
+}
+
+// UpdateUserService for updating user
+func UpdateUserService(userID string, payload bson.M) error {
+	uID, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		return err
+	}
+	filter := bson.M{"_id": uID}
+	result, err := collections.
+		User().
+		UpdateOne(
+			context.TODO(),
+			filter,
+			payload,
+		)
+	if err != nil {
+		return err
+	}
+	fmt.Println(result)
+	return nil
 }
 
 // CreateAudience create audience by admin
@@ -180,4 +202,13 @@ func GetUserComments(userID string, comment []*comments.Comments) error {
 	}
 
 	return nil
+}
+
+// CreateUserService for creating user
+func CreateUserService(user Users) (string, error) {
+	ID, err := collections.User().InsertOne(context.TODO(), user)
+	if err != nil {
+		return "", err
+	}
+	return ID.InsertedID.(primitive.ObjectID).Hex(), nil
 }
