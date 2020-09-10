@@ -6,6 +6,9 @@ import (
 	"net/http"
 	"strconv"
 
+	"go.mongodb.org/mongo-driver/bson/primitive"
+
+	gCtx "github.com/gorilla/context"
 	"github.com/just-arun/office-today/internals/middleware/response"
 	"github.com/just-arun/office-today/internals/pkg/comments"
 	"go.mongodb.org/mongo-driver/bson"
@@ -146,14 +149,16 @@ func AddBookmark(w http.ResponseWriter, r *http.Request) {
 
 // RemoveBookmark for adding to bookmark
 func RemoveBookmark(w http.ResponseWriter, r *http.Request) {
-	uID := mux.Vars(r)["id"]
-	var bookmark Bookmark
-	if err := json.NewDecoder(r.Body).Decode(&bookmark); err != nil {
+
+	uID := gCtx.Get(r, "uid").(string)
+	postID := mux.Vars(r)["id"]
+	pID, err := primitive.ObjectIDFromHex(postID)
+	if err != nil {
 		response.Error(w, http.StatusBadGateway, err.Error())
 		return
 	}
 
-	err := RemoveBookmarkService(uID, bookmark.ID)
+	err = RemoveBookmarkService(uID, pID)
 
 	if err != nil {
 		response.Error(w, http.StatusInternalServerError, err.Error())
@@ -172,14 +177,26 @@ func RemoveBookmark(w http.ResponseWriter, r *http.Request) {
 
 // UpdateImageURL for updating user
 func UpdateImageURL(w http.ResponseWriter, r *http.Request) {
+
+	userID := gCtx.Get(r, "uid").(string)
+
 	type s struct {
 		ImageURL string `json:"imageUrl" bson:"image_url"`
 	}
+
 	var user s
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		response.Error(w, http.StatusBadGateway, err.Error())
 		return
 	}
+
+	err := UpdateImageURLService(userID, user.ImageURL)
+
+	if err != nil {
+		response.Error(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	response.Success(
 		w, r,
 		http.StatusOK,
