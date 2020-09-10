@@ -32,15 +32,6 @@ func Users(r *mux.Router) {
 		),
 	).Methods("PUT")
 
-	s.HandleFunc("/{id}/image",
-		middleware.Auth(
-			middleware.Owner(
-				users.UpdateImageURL,
-				ownerarea.User,
-			),
-		),
-	).Methods("PUT")
-
 	s.HandleFunc("",
 		middleware.Auth(
 			middleware.UserType(
