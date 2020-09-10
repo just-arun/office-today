@@ -24,6 +24,7 @@ type Users struct {
 	Likes     []primitive.ObjectID `json:"likes,omitempty" bson:"likes"`
 	Bookmarks []primitive.ObjectID `json:"bookmarks,omitempty" bson:"bookmarks"`
 	OTP       int                  `bson:"otp,omitempty"`
+	ImageURL  string               `json:"imageUrl" bson:"image_url"`
 
 	RegistrationNumber       string    `json:"registrationNumber,omitempty" bson:"registration_number"`
 	Address                  string    `json:"address,omitempty" bson:"address"`
