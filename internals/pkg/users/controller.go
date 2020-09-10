@@ -175,34 +175,3 @@ func RemoveBookmark(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-// UpdateImageURL for updating user
-func UpdateImageURL(w http.ResponseWriter, r *http.Request) {
-
-	userID := gCtx.Get(r, "uid").(string)
-
-	type s struct {
-		ImageURL string `json:"imageUrl" bson:"image_url"`
-	}
-
-	var user s
-	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-		response.Error(w, http.StatusBadGateway, err.Error())
-		return
-	}
-
-	err := UpdateImageURLService(userID, user.ImageURL)
-
-	if err != nil {
-		response.Error(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	response.Success(
-		w, r,
-		http.StatusOK,
-		map[string]interface{}{
-			"ok": user.ImageURL,
-		},
-	)
-	return
-}

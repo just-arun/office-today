@@ -255,22 +255,3 @@ func RemoveBookmarkService(userID string, postID primitive.ObjectID) error {
 	return nil
 }
 
-// UpdateImageURLService for updating url
-func UpdateImageURLService(userID string, imgURL string) error {
-	uID, err := primitive.ObjectIDFromHex(userID)
-	if err != nil {
-		return err
-	}
-	_, err = collections.User().UpdateOne(
-		context.TODO(),
-		bson.M{"_id": uID},
-		bson.M{
-			"$set": bson.M{
-				"image_url": imgURL,
-			},
-		})
-	if err != nil {
-		return err
-	}
-	return nil
-}
