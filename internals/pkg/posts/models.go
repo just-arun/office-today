@@ -64,3 +64,11 @@ type CommentType struct {
 	CreatedAt time.Time          `json:"createdAt,omitempty" bson:"created_at"`
 	UpdatedAt time.Time          `json:"updatedAt,omitempty" bson:"updated_at"`
 }
+
+// User reference for post
+type User struct {
+	ID       primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
+	UserName string             `json:"userName,omitempty" bson:"user_name"`
+	Email    string             `json:"email,omitempty" bson:"email"`
+	ImageURL string             `json:"imageUrl,omitempty" bson:"image_url"`
+}

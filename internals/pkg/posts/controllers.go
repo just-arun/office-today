@@ -213,3 +213,40 @@ func RemoveLike(w http.ResponseWriter, r *http.Request) {
 	)
 	return
 }
+
+// CreateEnquiry for create enquiry
+func CreateEnquiry(w http.ResponseWriter, r *http.Request) {
+	uID := gCtx.Get(r, "uid").(string)
+	pID := mux.Vars(r)["id"]
+	err := CreateEnquiryService(pID, uID)
+	if err != nil {
+		response.Error(w, http.StatusUnprocessableEntity, err.Error())
+		return
+	}
+
+	response.Success(w, r,
+		http.StatusOK,
+		map[string]interface{}{
+			"ok": 1,
+		},
+	)
+	return
+}
+
+// GetEnquiry for getting all enquires
+func GetEnquiry(w http.ResponseWriter, r *http.Request) {
+	pID := mux.Vars(r)["id"]
+
+	users, err := GetEnquiryService(pID)
+
+	if err != nil {
+		response.Error(w, http.StatusUnprocessableEntity, err.Error())
+		return
+	}
+
+	response.Success(w, r,
+		http.StatusOK,
+		users,
+	)
+	return
+}
