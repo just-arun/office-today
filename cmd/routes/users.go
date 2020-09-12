@@ -30,7 +30,7 @@ func Users(r *mux.Router) {
 		),
 	).Methods("PUT")
 
-  // create user
+	// create user
 	s.HandleFunc("",
 		middleware.Auth(
 			middleware.UserType(
@@ -47,4 +47,10 @@ func Users(r *mux.Router) {
 			users.BookmarkHandle,
 		),
 	).Methods("POST")
+
+	s.HandleFunc("/profile",
+		middleware.Auth(
+			users.GetUserProfile,
+		),
+	).Methods("GET")
 }
