@@ -23,7 +23,8 @@ type Users struct {
 	Comments  []primitive.ObjectID `json:"comments,omitempty" bson:"comments"`
 	Likes     []primitive.ObjectID `json:"likes,omitempty" bson:"likes"`
 	Bookmarks []primitive.ObjectID `json:"bookmarks,omitempty" bson:"bookmarks"`
-	OTP       int                  `bson:"otp,omitempty"`
+	OTP       int                  `json:"otp,omitempty" bson:"otp,omitempty"`
+	ImageURL  string               `json:"imageUrl,omitempty" bson:"image_url"`
 
 	RegistrationNumber       string    `json:"registrationNumber,omitempty" bson:"registration_number"`
 	Address                  string    `json:"address,omitempty" bson:"address"`
@@ -37,7 +38,7 @@ type Users struct {
 	ContactPerson            string    `json:"contactPerson,omitempty" bson:"contact_person"`
 	ContactPersonDestination string    `json:"contactPersonDescription,omitempty" bson:"contact_person_destination"`
 
-	RefreshToken string                `bson:"refresh_token,omitempty"`
+	RefreshToken string                `json:"refreshToken,omitempty" bson:"refresh_token,omitempty"`
 	Status       userstatus.UserStatus `json:"userStatus,omitempty" bson:"status"`
 	Type         usertype.UserType     `json:"userType,omitempty" bson:"type"`
 	CreatedAt    time.Time             `json:"cretedAt" bson:"created_at"`

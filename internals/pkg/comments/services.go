@@ -144,29 +144,29 @@ func DeleteCommentService(id string) error {
 			context.TODO(),
 			postFilter,
 			postCommentData,
-    )
+		)
 
-  if err != nil {
-    return err
-  }
+	if err != nil {
+		return err
+	}
 
-  userFilter := bson.M{"_id": comment.UserID}
-  userFilterData := bson.M{
-    "$pull": bson.M{
-      "comments": comment.ID,
-    },
-  }
+	userFilter := bson.M{"_id": comment.UserID}
+	userFilterData := bson.M{
+		"$pull": bson.M{
+			"comments": comment.ID,
+		},
+	}
 
-  _, err = collections.
-    User().
-    UpdateOne(
-      context.TODO(),
-      userFilter,
-      userFilterData,
-    )
-  if err != nil {
-    return err
-  }
+	_, err = collections.
+		User().
+		UpdateOne(
+			context.TODO(),
+			userFilter,
+			userFilterData,
+		)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
