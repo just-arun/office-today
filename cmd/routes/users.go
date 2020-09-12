@@ -3,8 +3,6 @@ package routes
 import (
 	"fmt"
 
-	"github.com/just-arun/office-today/internals/middleware/ownerarea"
-
 	"github.com/just-arun/office-today/internals/pkg/users/usertype"
 
 	"github.com/just-arun/office-today/internals/middleware"
@@ -32,6 +30,7 @@ func Users(r *mux.Router) {
 		),
 	).Methods("PUT")
 
+  // create user
 	s.HandleFunc("",
 		middleware.Auth(
 			middleware.UserType(
@@ -42,21 +41,10 @@ func Users(r *mux.Router) {
 	).
 		Methods("POST")
 
-	s.HandleFunc("/{id}/bookmark/add",
+	// Add, Remove bookmark
+	s.HandleFunc("/bookmark",
 		middleware.Auth(
-			middleware.Owner(
-				users.AddBookmark,
-				ownerarea.User,
-			),
-		),
-	).Methods("POST")
-
-	s.HandleFunc("/{id}/bookmark/remove",
-		middleware.Auth(
-			middleware.Owner(
-				users.RemoveBookmark,
-				ownerarea.User,
-			),
+			users.BookmarkHandle,
 		),
 	).Methods("POST")
 }

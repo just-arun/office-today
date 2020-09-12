@@ -1,2 +1,4 @@
 # offer-today
 Back End server for offer today application
+
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/25202dd6347f3201ac4e#?env%5Boffice%20today%5D=W3sia2V5IjoibG9jYWwiLCJ2YWx1ZSI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MCIsImVuYWJsZWQiOnRydWV9LHsia2V5IjoidG9rZW4iLCJ2YWx1ZSI6IkJlYXJlciBleUpoYkdjaU9pSklVekkxTmlJc0luUjVjQ0k2SWtwWFZDSjkuZXlKbGVIQWlPakUxT1RrNU5EZzJOek1zSW1sa0lqb2lUbGRaTVUxcVdUQmFSRmt6VFhwRk1WcHRTWHBOTWs1cFRsZEZlbGt5VW0waWZRLkw5Z20zR3k0cW1nM3VxcDNEM181eUNpZmdWTUI1Z1puSnJaY1lkbW9xcWMiLCJlbmFibGVkIjp0cnVlfV0=)

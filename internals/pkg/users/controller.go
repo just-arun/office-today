@@ -6,8 +6,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"go.mongodb.org/mongo-driver/bson/primitive"
-
 	gCtx "github.com/gorilla/context"
 	"github.com/just-arun/office-today/internals/middleware/response"
 	"github.com/just-arun/office-today/internals/pkg/comments"
@@ -121,16 +119,22 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-// AddBookmark for adding to bookmark
-func AddBookmark(w http.ResponseWriter, r *http.Request) {
-	uID := mux.Vars(r)["id"]
+// BookmarkHandle for adding to bookmark
+func BookmarkHandle(w http.ResponseWriter, r *http.Request) {
+	uID := gCtx.Get(r, "uid").(string)
+	bookmarkType := r.URL.Query()["type"][0]
+
 	var bookmark Bookmark
 	if err := json.NewDecoder(r.Body).Decode(&bookmark); err != nil {
 		response.Error(w, http.StatusBadGateway, err.Error())
 		return
 	}
-
-	err := AddBookmarkService(uID, bookmark.ID)
+	var err error
+	if bookmarkType == "add" {
+		err = AddBookmarkService(uID, bookmark.ID)
+	} else {
+		err = RemoveBookmarkService(uID, bookmark.ID)
+	}
 
 	if err != nil {
 		response.Error(w, http.StatusInternalServerError, err.Error())
@@ -146,32 +150,3 @@ func AddBookmark(w http.ResponseWriter, r *http.Request) {
 	)
 	return
 }
-
-// RemoveBookmark for adding to bookmark
-func RemoveBookmark(w http.ResponseWriter, r *http.Request) {
-
-	uID := gCtx.Get(r, "uid").(string)
-	postID := mux.Vars(r)["id"]
-	pID, err := primitive.ObjectIDFromHex(postID)
-	if err != nil {
-		response.Error(w, http.StatusBadGateway, err.Error())
-		return
-	}
-
-	err = RemoveBookmarkService(uID, pID)
-
-	if err != nil {
-		response.Error(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	response.Success(
-		w, r,
-		http.StatusOK,
-		map[string]interface{}{
-			"ok": 1,
-		},
-	)
-	return
-}
-

@@ -9,7 +9,7 @@ import (
 
 	"github.com/just-arun/office-today/internals/pkg/comments"
 
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -82,32 +82,68 @@ func GetOne(fileter bson.M) (*Posts, error) {
 }
 
 // GetAll get all posts
-func GetAll(filter bson.M, page int) ([]Posts, error) {
-	var posts []Posts
-
-	option := options.Find()
-	count := 20
-	skip := int64((page * count) - count)
-	limit := int64(count * 1)
-
+func GetAll(filter bson.M, page int) ([]GetPostStruct, error) {
+	sort := bson.D{{"$sort", bson.M{"created_at": -1}}}
+	match := bson.D{{"$match", filter}}
+	ownerLookup := bson.D{{"$lookup", bson.M{
+		"from":         "users",
+		"localField":   "user_id",
+		"foreignField": "_id",
+		"as":           "owner",
+	}}}
+	projectData := bson.D{{"$project", bson.M{
+		"_id":         1,
+		"title":       1,
+		"description": 1,
+		"image_url":   1,
+		"owner":       1,
+		"comment_count": bson.M{
+			"$size": "$comments_id",
+		},
+		"enquiry_count": bson.M{
+			"$size": "$enquiry_id",
+		},
+		"likes": 1,
+		"like_count": bson.M{
+			"$size": "$likes",
+		},
+		"comments":   1,
+		"status":     1,
+		"created_at": 1,
+		"updated_at": 1,
+	}}}
+	unwrapOwner := bson.D{{"$unwind", "$owner"}}
+	var skip bson.D
 	if page > 0 {
-		option.Skip = &skip
-		option.Limit = &limit
+		skip = bson.D{{"$skip", (page * 20) - 20}}
+	} else {
+		skip = bson.D{{"$skip", 0}}
 	}
-	option.Sort = bson.M{"created_at": -1}
 
-	ctx := context.TODO()
+	limit := bson.D{{"$limit", 20}}
+
+	aggregateFilter := mongo.Pipeline{
+		match,
+		sort,
+		ownerLookup,
+		unwrapOwner,
+		projectData,
+		skip,
+		limit,
+	}
 
 	cursor, err := collections.
 		Post().
-		Find(ctx, filter, option)
+		Aggregate(context.TODO(), aggregateFilter)
 
 	if err != nil {
 		return nil, err
 	}
 
+	var posts []GetPostStruct
+
 	for cursor.Next(context.TODO()) {
-		var post Posts
+		var post GetPostStruct
 		err := cursor.Decode(&post)
 		if err != nil {
 			return nil, err
@@ -120,18 +156,45 @@ func GetAll(filter bson.M, page int) ([]Posts, error) {
 }
 
 // GetPostComments get all posts comments
-func GetPostComments(postID string, comment []*comments.Comments) error {
+func GetPostComments(postID string) ([]CommentType, error) {
 	ID, err := primitive.ObjectIDFromHex(postID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	err = comments.GetAllCommentsService(bson.M{"post_id": ID}, comment)
+	matchStage := bson.D{{"$match", bson.D{{"post", ID}}}}
+	lookupUser := bson.D{{"$lookup", bson.M{
+		"from":         "users",
+		"localField":   "user",
+		"foreignField": "_id",
+		"as":           "owner",
+	}}}
+	unwindOwner := bson.D{{"$unwind", "$owner"}}
+	projectData := bson.D{{"$project", bson.M{
+		"_id":        1,
+		"owner":      1,
+		"comment":    1,
+		"created_at": 1,
+		"updated_at": 1,
+	}}}
+	filter := mongo.Pipeline{matchStage, lookupUser, unwindOwner, projectData}
+	cursor, err := collections.Comment().Aggregate(
+		context.TODO(),
+		filter,
+	)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	var comment []CommentType
+
+	for cursor.Next(context.TODO()) {
+		var com CommentType
+		cursor.Decode(&com)
+		comment = append(comment, com)
+	}
+	fmt.Println(comment)
+	return comment, nil
 }
 
 // CheckOwner for post
@@ -256,8 +319,6 @@ func AddLikeService(postID string, userID string) error {
 
 	return nil
 }
-
-
 
 // RemoveLikeService for like post
 func RemoveLikeService(postID string, userID string) error {

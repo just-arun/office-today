@@ -6,8 +6,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/just-arun/office-today/internals/pkg/comments"
-
 	"github.com/just-arun/office-today/internals/pkg/posts/poststatus"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -129,6 +127,10 @@ func GetAllPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if posts == nil {
+		posts = []GetPostStruct{}
+	}
+
 	response.Success(w, r,
 		http.StatusOK,
 		posts,
@@ -158,8 +160,7 @@ func DisablePost(w http.ResponseWriter, r *http.Request) {
 func GetComments(w http.ResponseWriter, r *http.Request) {
 	postID := mux.Vars(r)["id"]
 
-	var postComments []*comments.Comments
-	err := GetPostComments(postID, postComments)
+	postComments, err := GetPostComments(postID)
 
 	if err != nil {
 		response.Error(w, http.StatusUnprocessableEntity, err.Error())

@@ -74,4 +74,10 @@ func Posts(r *mux.Router) {
 		),
 	).Methods("POST")
 
+	s.HandleFunc("/{id}/comments",
+		middleware.Auth(
+			posts.GetComments,
+		),
+	).Methods("GET")
+
 }
