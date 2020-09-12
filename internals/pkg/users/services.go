@@ -280,3 +280,50 @@ func RemoveBookmarkService(userID string, postID primitive.ObjectID) error {
 	fmt.Println(result)
 	return nil
 }
+
+// GetUserProfileService for getting user profile
+func GetUserProfileService(userID string) (*Users, error) {
+	uID, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		return nil, err
+	}
+	filter := bson.M{
+		"_id": uID,
+		"$ne": bson.M{
+			"status": Userstatus.Disabled,
+		},
+	}
+	option := options.FindOne()
+	option.Projection = bson.M{
+		"_id":                        1,
+		"user_name":                  1,
+		"email":                      1,
+		"posts":                      1,
+		"comments":                   1,
+		"likes":                      1,
+		"bookmarks":                  1,
+		"image_url":                  1,
+		"registration_number":        1,
+		"address":                    1,
+		"po_box":                     1,
+		"phone":                      1,
+		"fax":                        1,
+		"mobile":                     1,
+		"registration_date":          1,
+		"subscription":               1,
+		"payment_terms":              1,
+		"contact_person":             1,
+		"contact_person_destination": 1,
+		"type":                       1,
+		"created_at":                 1,
+		"updated_at":                 1,
+	}
+	collections.
+		User().
+		FindOne(
+			context.TODO(),
+			filter,
+			option,
+		)
+	return nil, nil
+}
