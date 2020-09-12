@@ -435,8 +435,8 @@ func GetEnquiryService(postID string) ([]*User, error) {
 		Find(
 			context.TODO(),
 			bson.M{
-				"$in": bson.M{
-					"_id": post.EnquiryID,
+				"_id": bson.M{
+					"$in": post.EnquiryID,
 				},
 			},
 			option,
