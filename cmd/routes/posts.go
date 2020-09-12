@@ -80,4 +80,16 @@ func Posts(r *mux.Router) {
 		),
 	).Methods("GET")
 
+	s.HandleFunc("/{id}/enquiry",
+		middleware.Auth(
+			posts.CreateEnquiry,
+		),
+	).Methods("POST")
+
+	s.HandleFunc("/{id}/enquiry",
+		middleware.Auth(
+			posts.GetEnquiry,
+		),
+	).Methods("GET")
+
 }

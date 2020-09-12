@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	"go.mongodb.org/mongo-driver/mongo/options"
+
 	"github.com/just-arun/office-today/internals/pkg/posts/poststatus"
 
 	"github.com/just-arun/office-today/internals/pkg/comments"
@@ -364,4 +366,96 @@ func RemoveLikeService(postID string, userID string) error {
 	}
 
 	return nil
+}
+
+// CreateEnquiryService for creating enquiry
+func CreateEnquiryService(postID string, userID string) error {
+	uID, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		return err
+	}
+	pID, err := primitive.ObjectIDFromHex(postID)
+	if err != nil {
+		return err
+	}
+
+	_, err = collections.
+		Post().
+		UpdateOne(
+			context.TODO(),
+			bson.M{
+				"_id": pID,
+			},
+			bson.M{
+				"$addToSet": bson.M{
+					"enquiry_id": uID,
+				},
+			},
+		)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// GetEnquiryService for getting all service
+func GetEnquiryService(postID string) ([]*User, error) {
+	pID, err := primitive.ObjectIDFromHex(postID)
+	if err != nil {
+		return nil, err
+	}
+
+	var post Posts
+
+	err = collections.
+		Post().
+		FindOne(
+			context.TODO(),
+			bson.M{
+				"_id": pID,
+			},
+		).Decode(&post)
+
+	if err != nil {
+		return nil, err
+	}
+
+	option := options.Find()
+	option.Projection = bson.M{
+		"_id":       1,
+		"user_name": 1,
+		"email":     1,
+		"image_url": 1,
+	}
+
+	cursor, err := collections.
+		User().
+		Find(
+			context.TODO(),
+			bson.M{
+				"$in": bson.M{
+					"_id": post.EnquiryID,
+				},
+			},
+			option,
+		)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var users []*User
+
+	for cursor.Next(context.TODO()) {
+		var user *User
+		err := cursor.Decode(&user)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, user)
+	}
+
+	return users, nil
 }
