@@ -460,3 +460,47 @@ func GetEnquiryService(postID string) ([]*User, error) {
 
 	return users, nil
 }
+
+// CreateTagService for creating tags
+func CreateTagService(tag Tags) (interface{}, error) {
+	result, err := collections.PostTag().
+		InsertOne(context.TODO(), tag)
+	if err != nil {
+		return nil, err
+	}
+	return result.InsertedID.(primitive.ObjectID).Hex(), nil
+}
+
+// GetTagService for getting all tags
+func GetTagService() (interface{}, error) {
+	cursor, err := collections.PostTag().
+		Find(context.TODO(), bson.M{})
+	if err != nil {
+		return nil, err
+	}
+	var tags []Tags
+	for cursor.Next(context.TODO()) {
+		var tag Tags
+		err := cursor.Decode(&tag)
+		if err != nil {
+			return nil, err
+		}
+		tags = append(tags, tag)
+	}
+
+	return tags, nil
+}
+
+// DeleteTag for deleting tag
+func DeleteTag(tagID string) (interface{}, error) {
+	tID, err := primitive.ObjectIDFromHex(tagID)
+	if err != nil {
+		return nil, err
+	}
+	result, err := collections.PostTag().
+	DeleteOne(context.TODO(), bson.M{"_id": tID})
+	if err != nil {
+		return nil, err
+	}
+	return result.DeletedCount, nil
+}

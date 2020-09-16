@@ -27,16 +27,10 @@ func Comment() *mongo.Collection {
 		Collection("comments")
 }
 
-// Bookmarks connection for database
-func Bookmarks() *mongo.Collection {
+// PostTag connection for database
+func PostTag() *mongo.Collection {
 	return database.DataBaseConnection.
 		Database(config.DatabaseName).
-		Collection("comments")
+		Collection("tags")
 }
 
-// Enquiry connection for database
-func Enquiry() *mongo.Collection {
-	return database.DataBaseConnection.
-		Database(config.DatabaseName).
-		Collection("comments")
-}
