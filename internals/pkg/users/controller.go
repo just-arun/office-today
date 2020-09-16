@@ -160,9 +160,9 @@ func GetUserProfile(w http.ResponseWriter, r *http.Request)  {
 		response.Error(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-
-	if user != nil {
-		user = &Users{}
+	fmt.Println(user)
+	if user == nil {
+		user = &UsersStruct{}
 	}
 
 	response.Success(

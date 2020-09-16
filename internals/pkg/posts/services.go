@@ -85,15 +85,15 @@ func GetOne(fileter bson.M) (*Posts, error) {
 
 // GetAll get all posts
 func GetAll(filter bson.M, page int) ([]GetPostStruct, error) {
-	sort := bson.D{{"$sort", bson.M{"created_at": -1}}}
-	match := bson.D{{"$match", filter}}
-	ownerLookup := bson.D{{"$lookup", bson.M{
+	sort := bson.D{{Key: "$sort", Value: bson.M{"created_at": -1}}}
+	match := bson.D{{Key: "$match", Value: filter}}
+	ownerLookup := bson.D{{Key: "$lookup", Value: bson.M{
 		"from":         "users",
 		"localField":   "user_id",
 		"foreignField": "_id",
 		"as":           "owner",
 	}}}
-	projectData := bson.D{{"$project", bson.M{
+	projectData := bson.D{{Key: "$project", Value: bson.M{
 		"_id":         1,
 		"title":       1,
 		"description": 1,
@@ -114,15 +114,16 @@ func GetAll(filter bson.M, page int) ([]GetPostStruct, error) {
 		"created_at": 1,
 		"updated_at": 1,
 	}}}
-	unwrapOwner := bson.D{{"$unwind", "$owner"}}
+	unwrapOwner := bson.D{{Key: "$unwind", Value: "$owner"}}
+	perPage := 20
 	var skip bson.D
 	if page > 0 {
-		skip = bson.D{{"$skip", (page * 20) - 20}}
+		skip = bson.D{{Key: "$skip", Value: (page * perPage) - perPage}}
 	} else {
-		skip = bson.D{{"$skip", 0}}
+		skip = bson.D{{Key: "$skip", Value: 0}}
 	}
 
-	limit := bson.D{{"$limit", 20}}
+	limit := bson.D{{Key: "$limit", Value: perPage}}
 
 	aggregateFilter := mongo.Pipeline{
 		match,
@@ -164,15 +165,15 @@ func GetPostComments(postID string) ([]CommentType, error) {
 		return nil, err
 	}
 
-	matchStage := bson.D{{"$match", bson.D{{"post", ID}}}}
-	lookupUser := bson.D{{"$lookup", bson.M{
+	matchStage := bson.D{{Key: "$match", Value: bson.D{{Key: "post", Value: ID}}}}
+	lookupUser := bson.D{{Key: "$lookup", Value: bson.M{
 		"from":         "users",
 		"localField":   "user",
 		"foreignField": "_id",
 		"as":           "owner",
 	}}}
-	unwindOwner := bson.D{{"$unwind", "$owner"}}
-	projectData := bson.D{{"$project", bson.M{
+	unwindOwner := bson.D{{Key: "$unwind", Value: "$owner"}}
+	projectData := bson.D{{Key: "$project", Value: bson.M{
 		"_id":        1,
 		"owner":      1,
 		"comment":    1,

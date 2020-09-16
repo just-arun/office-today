@@ -50,6 +50,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		response.Error(w, http.StatusForbidden, err.Error())
 		return
 	}
+	fmt.Println(login)
 	result, err := LoginService(&login)
 	if err != nil {
 		response.Error(w, http.StatusForbidden, err.Error())

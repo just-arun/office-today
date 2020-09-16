@@ -16,6 +16,7 @@ import (
 
 	Usertype "github.com/just-arun/office-today/internals/pkg/users/usertype"
 
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -282,48 +283,68 @@ func RemoveBookmarkService(userID string, postID primitive.ObjectID) error {
 }
 
 // GetUserProfileService for getting user profile
-func GetUserProfileService(userID string) (*Users, error) {
+func GetUserProfileService(userID string) (*UsersStruct, error) {
 	uID, err := primitive.ObjectIDFromHex(userID)
 	if err != nil {
 		return nil, err
 	}
-	filter := bson.M{
-		"_id": uID,
-		"$ne": bson.M{
-			"status": Userstatus.Disabled,
+	match := bson.D{{
+		Key: "$match",
+		Value: bson.M{
+			"_id": uID,
+			"status": bson.M{
+				"$ne": Userstatus.Disabled,
+			},
 		},
-	}
-	option := options.FindOne()
-	option.Projection = bson.M{
-		"_id":                        1,
-		"user_name":                  1,
-		"email":                      1,
-		"posts":                      1,
-		"comments":                   1,
-		"likes":                      1,
-		"bookmarks":                  1,
-		"image_url":                  1,
-		"registration_number":        1,
-		"address":                    1,
-		"po_box":                     1,
-		"phone":                      1,
-		"fax":                        1,
-		"mobile":                     1,
-		"registration_date":          1,
-		"subscription":               1,
-		"payment_terms":              1,
-		"contact_person":             1,
-		"contact_person_destination": 1,
-		"type":                       1,
-		"created_at":                 1,
-		"updated_at":                 1,
-	}
-	collections.
+	}}
+	project := bson.D{{
+		Key: "$project",
+		Value: bson.M{
+			"_id":                        1,
+			"user_name":                  1,
+			"email":                      1,
+			"posts":                      1,
+			"comments":                   1,
+			"likes":                      1,
+			"bookmarks":                  1,
+			"image_url":                  1,
+			"registration_number":        1,
+			"address":                    1,
+			"po_box":                     1,
+			"phone":                      1,
+			"fax":                        1,
+			"mobile":                     1,
+			"registration_date":          1,
+			"subscription":               1,
+			"payment_terms":              1,
+			"contact_person":             1,
+			"contact_person_destination": 1,
+			"type":                       1,
+			"created_at":                 1,
+			"updated_at":                 1,
+		},
+	}}
+	filter := mongo.Pipeline{match, project}
+	cursor, err := collections.
 		User().
-		FindOne(
+		Aggregate(
 			context.TODO(),
 			filter,
-			option,
 		)
-	return nil, nil
+
+	if err != nil {
+		return nil, err
+	}
+	var user UsersStruct
+
+	for cursor.Next(context.TODO()) {
+		err = cursor.Decode(&user)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	fmt.Println(user)
+
+	return &user, nil
 }
