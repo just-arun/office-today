@@ -91,6 +91,7 @@ func GetOnePost(w http.ResponseWriter, r *http.Request) {
 func GetAllPost(w http.ResponseWriter, r *http.Request) {
 	page := r.URL.Query()["page"]
 	userID := r.URL.Query()["user"]
+	fmt.Println(page)
 
 	filter := bson.M{}
 	filter["status"] = bson.M{

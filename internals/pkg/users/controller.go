@@ -150,3 +150,25 @@ func BookmarkHandle(w http.ResponseWriter, r *http.Request) {
 	)
 	return
 }
+
+
+// GetUserProfile from getting user profile
+func GetUserProfile(w http.ResponseWriter, r *http.Request)  {
+	uID := gCtx.Get(r, "uid").(string)
+	user, err := GetUserProfileService(uID)
+	if err != nil {
+		response.Error(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	fmt.Println(user)
+	if user == nil {
+		user = &UsersStruct{}
+	}
+
+	response.Success(
+		w, r,
+		http.StatusOK,
+		user,
+	)
+	return
+}
