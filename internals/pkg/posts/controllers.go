@@ -251,3 +251,56 @@ func GetEnquiry(w http.ResponseWriter, r *http.Request) {
 	)
 	return
 }
+
+// CreateTags for creating tags
+func CreateTags(w http.ResponseWriter, r *http.Request) {
+	var tag Tags
+	if err := json.NewDecoder(r.Body).Decode(&tag); err != nil {
+		response.Error(w, http.StatusUnprocessableEntity, err.Error())
+		return
+	}
+
+	result, err := CreateTagService(tag)
+	if err != nil {
+		response.Error(w, http.StatusUnprocessableEntity, err.Error())
+		return
+	}
+	response.Success(w, r,
+		http.StatusCreated,
+		map[string]interface{}{
+			"id": result,
+		},
+	)
+	return
+}
+
+// GetTags for getting tags
+func GetTags(w http.ResponseWriter, r *http.Request) {
+	result, err := GetTagService()
+	if err != nil {
+		response.Error(w, http.StatusUnprocessableEntity, err.Error())
+		return
+	}
+	response.Success(w, r,
+		http.StatusCreated,
+		result,
+	)
+	return
+}
+
+// DeleteTag for deleting tag
+func DeleteTag(w http.ResponseWriter, r *http.Request) {
+	uid := mux.Vars(r)["id"]
+	result, err := DeleteTagService(uid)
+	if err != nil {
+		response.Error(w, http.StatusUnprocessableEntity, err.Error())
+		return
+	}
+	response.Success(w, r,
+		http.StatusCreated,
+		map[string]interface{}{
+			"id": result,
+		},
+	)
+	return
+}

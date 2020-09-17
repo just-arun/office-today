@@ -15,6 +15,12 @@ type LikePostStruct struct {
 	UserID primitive.ObjectID `json:"userId"`
 }
 
+// Tags for tagging posts
+type Tags struct {
+	ID   primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
+	Name string             `json:"name" bson:"name"`
+}
+
 // Posts model
 type Posts struct {
 	ID          primitive.ObjectID    `json:"id" bson:"_id,omitempty"`
@@ -26,6 +32,7 @@ type Posts struct {
 	Comments    []comments.Comments   `json:"comments,omitempty" bson:"comments"`
 	EnquiryID   []primitive.ObjectID  `json:"enquiryId" bson:"enquiry_id"`
 	Likes       []primitive.ObjectID  `json:"likes" bson:"likes"`
+	Tags        primitive.ObjectID    `json:"tags" bson:"tags"`
 	Status      poststatus.PostStatus `json:"status" bson:"status"`
 	CreatedAt   time.Time             `json:"createdAt" bson:"created_at"`
 	UpdatedAt   time.Time             `json:"updatedAt" bson:"updated_at"`
@@ -43,6 +50,7 @@ type GetPostStruct struct {
 	EnquiryID    []primitive.ObjectID  `json:"enquiryId,omitempty" bson:"enquiry_id"`
 	EnquiryCount int                   `json:"enquiryCount" bson:"enquiry_count"`
 	Likes        []primitive.ObjectID  `json:"likes" bson:"likes"`
+	Tags         primitive.ObjectID    `json:"tags,omitempty" bson:"tags,omitempty"`
 	LikeCount    int                   `json:"likeCount" bson:"like_count"`
 	Comments     []comments.Comments   `json:"comments,omitempty" bson:"comments"`
 	Status       poststatus.PostStatus `json:"status,omitempty" bson:"status"`

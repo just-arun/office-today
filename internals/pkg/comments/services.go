@@ -97,7 +97,7 @@ func CheckOwner(commentID string, userID string) bool {
 	}
 	var comment Comments
 	if err := collections.
-		Bookmarks().
+		Comment().
 		FindOne(
 			context.TODO(),
 			bson.M{

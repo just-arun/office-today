@@ -134,13 +134,15 @@ func GetOne(
 func GetAll(
 	filter map[string]interface{},
 	page int,
-) ([]*Users, error) {
-	var users []*Users
+) ([]*UsersStruct, error) {
+	var users []*UsersStruct
 
 	option := options.Find()
+	amount := 10
+
 	if page > 0 {
-		skip := int64((page * 20) - 20)
-		limit := int64(20)
+		skip := int64((page * amount) - amount)
+		limit := int64(amount)
 
 		option.Skip = &skip
 		option.Limit = &limit
@@ -180,7 +182,7 @@ func GetAll(
 		return nil, err
 	}
 	for cursor.Next(context.TODO()) {
-		var user *Users
+		var user *UsersStruct
 		err := cursor.Decode(&user)
 		if err != nil {
 			return nil, err
