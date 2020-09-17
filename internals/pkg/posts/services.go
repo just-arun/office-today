@@ -491,8 +491,8 @@ func GetTagService() (interface{}, error) {
 	return tags, nil
 }
 
-// DeleteTag for deleting tag
-func DeleteTag(tagID string) (interface{}, error) {
+// DeleteTagService for deleting tag
+func DeleteTagService(tagID string) (interface{}, error) {
 	tID, err := primitive.ObjectIDFromHex(tagID)
 	if err != nil {
 		return nil, err

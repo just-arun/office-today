@@ -10,18 +10,26 @@ import (
 	"github.com/just-arun/office-today/internals/middleware/response"
 	"github.com/just-arun/office-today/internals/pkg/comments"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"github.com/gorilla/mux"
 )
 
 // GetUsers get users
 func GetUsers(w http.ResponseWriter, r *http.Request) {
-	page := mux.Vars(r)["id"]
+	page := r.URL.Query()["page"]
+	userID := gCtx.Get(r, "uid").(string)
+	uID, err := primitive.ObjectIDFromHex(userID);
+	
+	if err != nil {
+		response.Error(w, http.StatusBadGateway, err.Error())
+		return
+	}
 
 	count := 0
 
 	if len(page) > 0 {
-		num, err := strconv.Atoi(page)
+		num, err := strconv.Atoi(page[0])
 		if err != nil {
 			response.Error(w, http.StatusBadGateway, err.Error())
 			return
@@ -30,13 +38,21 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user, err := GetAll(
-		bson.M{},
+		bson.M{
+			"_id": bson.M{
+				"$ne": uID,
+			},
+		},
 		count,
 	)
 
 	if err != nil {
 		response.Error(w, http.StatusBadGateway, err.Error())
 		return
+	}
+
+	if user == nil {
+		user = []*UsersStruct{}
 	}
 
 	response.Success(w, r,
