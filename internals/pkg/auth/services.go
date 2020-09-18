@@ -48,8 +48,9 @@ func LoginService(login *LoginDto) (map[string]interface{}, error) {
 		"email": login.Email,
 		"status": bson.M{
 			"$ne": userstatus.Disabled,
-		}})
-
+		},
+	})
+	fmt.Println(user,login.Email)
 	if err != nil {
 		return nil, errors.New("invalided credentials")
 	}

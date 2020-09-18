@@ -105,6 +105,7 @@ func GetAll(filter bson.M, page int) ([]GetPostStruct, error) {
 		"enquiry_count": bson.M{
 			"$size": "$enquiry_id",
 		},
+		"tags":  1,
 		"likes": 1,
 		"like_count": bson.M{
 			"$size": "$likes",
@@ -134,10 +135,23 @@ func GetAll(filter bson.M, page int) ([]GetPostStruct, error) {
 		skip,
 		limit,
 	}
+	mod := mongo.IndexModel{
+		Keys: bson.D{
+			{Key: "$**", Value: "text"},
+		},
+		Options: &options.IndexOptions{},
+	}
+	ind, err := collections.Post().Indexes().CreateOne(context.TODO(), mod)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println("index", ind)
+
+	option := options.Aggregate()
 
 	cursor, err := collections.
 		Post().
-		Aggregate(context.TODO(), aggregateFilter)
+		Aggregate(context.TODO(), aggregateFilter, option)
 
 	if err != nil {
 		return nil, err
@@ -472,7 +486,7 @@ func CreateTagService(tag Tags) (interface{}, error) {
 }
 
 // GetTagService for getting all tags
-func GetTagService() (interface{}, error) {
+func GetTagService() ([]Tags, error) {
 	cursor, err := collections.PostTag().
 		Find(context.TODO(), bson.M{})
 	if err != nil {
@@ -498,7 +512,7 @@ func DeleteTagService(tagID string) (interface{}, error) {
 		return nil, err
 	}
 	result, err := collections.PostTag().
-	DeleteOne(context.TODO(), bson.M{"_id": tID})
+		DeleteOne(context.TODO(), bson.M{"_id": tID})
 	if err != nil {
 		return nil, err
 	}

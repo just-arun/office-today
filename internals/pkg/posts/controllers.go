@@ -28,6 +28,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	post.Title = createPost.Title
 	post.Description = createPost.Description
 	post.ImageURL = createPost.ImageURL
+	post.Tags = createPost.Tags
 
 	userID := gCtx.Get(r, "uid")
 	postID, err := post.Save(userID.(string))
@@ -90,7 +91,10 @@ func GetOnePost(w http.ResponseWriter, r *http.Request) {
 // GetAllPost for getting all post
 func GetAllPost(w http.ResponseWriter, r *http.Request) {
 	page := r.URL.Query()["page"]
+	tags := r.URL.Query()["tag"]
 	userID := r.URL.Query()["user"]
+	search := r.URL.Query()["search"]
+	// $text: { $search: "java coffee shop" }
 	fmt.Println(page)
 
 	filter := bson.M{}
@@ -107,6 +111,23 @@ func GetAllPost(w http.ResponseWriter, r *http.Request) {
 		filter["user_id"] = uID
 	}
 
+	if len(tags) > 0 {
+		if tags[0] != "" {
+			tID, err := primitive.ObjectIDFromHex(tags[0])
+			if err != nil {
+				response.Error(w, http.StatusUnprocessableEntity, err.Error())
+				return
+			}
+			filter["tags"] = tID
+		}
+	}
+
+	if len(search) > 0 {
+		if search[0] != "" {
+			filter["$text"] = bson.M{ "$search": search[0] }
+		}
+	}
+
 	var count int
 
 	if len(page) > 0 {
@@ -120,7 +141,7 @@ func GetAllPost(w http.ResponseWriter, r *http.Request) {
 	} else {
 		count = 0
 	}
-
+	fmt.Println(filter)
 	posts, err := GetAll(filter, count)
 
 	if err != nil {
@@ -280,6 +301,9 @@ func GetTags(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		response.Error(w, http.StatusUnprocessableEntity, err.Error())
 		return
+	}
+	if result == nil {
+		result = []Tags{}
 	}
 	response.Success(w, r,
 		http.StatusCreated,

@@ -6,6 +6,7 @@ require (
 	github.com/asaskevich/govalidator v0.0.0-20200428143746-21a406dcc535
 	github.com/cespare/reflex v0.3.0 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/go-playground/locales v0.13.0
 	github.com/go-playground/validator/v10 v10.3.0
 	github.com/gogo/protobuf v1.3.1 // indirect
 	github.com/gorilla/context v1.1.1
@@ -20,4 +21,5 @@ require (
 	golang.org/x/text v0.3.3
 	golang.org/x/tools/gopls v0.4.4 // indirect
 	google.golang.org/genproto v0.0.0-20200815001618-f69a88009b70
+	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22
 )

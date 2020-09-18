@@ -1,10 +1,13 @@
 package posts
 
+import "go.mongodb.org/mongo-driver/bson/primitive"
+
 // CreatePostDto used for creating post
 type CreatePostDto struct {
-	Title       string `json:"title" bson:"title"`
-	Description string `json:"description" bson:"description"`
-	ImageURL    string `json:"imageUrl" bson:"image_url"`
+	Title       string             `json:"title" bson:"title"`
+	Description string             `json:"description" bson:"description"`
+	ImageURL    string             `json:"imageUrl" bson:"image_url"`
+	Tags        primitive.ObjectID `json:"tags" bson:"tags"`
 }
 
 // EditPostDto for editing post

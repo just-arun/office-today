@@ -29,9 +29,9 @@ type Users struct {
 	RegistrationNumber       string    `json:"registrationNumber,omitempty" bson:"registration_number"`
 	Address                  string    `json:"address,omitempty" bson:"address"`
 	PoBox                    string    `json:"poBox,omitempty" bson:"po_box"`
-	Phone                    int       `json:"phone,omitempty" bson:"phone"`
-	Fax                      int       `json:"fax,omitempty" bson:"fax"`
-	Mobile                   int       `json:"mobile,omitempty" bson:"mobile"`
+	Phone                    string    `json:"phone,omitempty" bson:"phone"`
+	Fax                      string    `json:"fax,omitempty" bson:"fax"`
+	Mobile                   string    `json:"mobile,omitempty" bson:"mobile"`
 	RegistrationDate         time.Time `json:"registrationDate,omitempty" bson:"registration_date"`
 	Subscription             string    `json:"subscription,omitempty" bson:"subscription"`
 	PaymentTerms             string    `json:"paymentTerms,omitempty" bson:"payment_terms"`
@@ -44,8 +44,6 @@ type Users struct {
 	CreatedAt    time.Time             `json:"cretedAt" bson:"created_at"`
 	UpdatedAt    time.Time             `json:"updatedAt" bson:"updated_at"`
 }
-
-
 
 // UsersStruct model
 type UsersStruct struct {
@@ -61,17 +59,17 @@ type UsersStruct struct {
 	RegistrationNumber       string    `json:"registrationNumber" bson:"registration_number"`
 	Address                  string    `json:"address" bson:"address"`
 	PoBox                    string    `json:"poBox" bson:"po_box"`
-	Phone                    int       `json:"phone" bson:"phone"`
-	Fax                      int       `json:"fax" bson:"fax"`
-	Mobile                   int       `json:"mobile" bson:"mobile"`
+	Phone                    string    `json:"phone" bson:"phone"`
+	Fax                      string    `json:"fax" bson:"fax"`
+	Mobile                   string    `json:"mobile" bson:"mobile"`
 	RegistrationDate         time.Time `json:"registrationDate" bson:"registration_date"`
 	Subscription             string    `json:"subscription" bson:"subscription"`
 	PaymentTerms             string    `json:"paymentTerms" bson:"payment_terms"`
 	ContactPerson            string    `json:"contactPerson" bson:"contact_person"`
 	ContactPersonDestination string    `json:"contactPersonDescription" bson:"contact_person_destination"`
 
-	Status       userstatus.UserStatus `json:"userStatus" bson:"status"`
-	Type         usertype.UserType     `json:"userType" bson:"type"`
-	CreatedAt    time.Time             `json:"cretedAt" bson:"created_at"`
-	UpdatedAt    time.Time             `json:"updatedAt" bson:"updated_at"`
+	Status    userstatus.UserStatus `json:"userStatus" bson:"status"`
+	Type      usertype.UserType     `json:"userType" bson:"type"`
+	CreatedAt time.Time             `json:"cretedAt" bson:"created_at"`
+	UpdatedAt time.Time             `json:"updatedAt" bson:"updated_at"`
 }

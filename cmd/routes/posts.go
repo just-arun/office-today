@@ -94,10 +94,7 @@ func Posts(r *mux.Router) {
 
 	s.HandleFunc("/tag/get",
 		middleware.Auth(
-			middleware.UserType(
-				posts.GetTags,
-				usertype.Admin,
-			),
+			posts.GetTags,
 		),
 	).Methods("GET")
 
@@ -110,7 +107,7 @@ func Posts(r *mux.Router) {
 		),
 	).Methods("POST")
 
-	s.HandleFunc("/tag/create",
+	s.HandleFunc("/tag/delete/{id}",
 		middleware.Auth(
 			middleware.UserType(
 				posts.DeleteTag,
