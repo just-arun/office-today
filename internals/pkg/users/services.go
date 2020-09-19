@@ -132,6 +132,19 @@ func GetOne(
 	return &user, nil
 }
 
+// GetOneUserService for getting user
+func GetOneUserService(filter bson.M)  (*UsersStruct, error) {
+	var user UsersStruct
+	ctx := context.TODO()
+	err := collections.User().
+		FindOne(ctx, filter).
+		Decode(&user)
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
 // GetAll users
 func GetAll(
 	filter map[string]interface{},
