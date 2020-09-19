@@ -354,6 +354,19 @@ func GetUserProfileService(userID string) (*UsersStruct, error) {
 
 // SearchUserService for searching users
 func SearchUserService(key string) ([]SearchStruct, error) {
+
+	mod := mongo.IndexModel{
+		Keys: bson.D{
+			{Key: "$**", Value: "text"},
+		},
+		Options: &options.IndexOptions{},
+	}
+	ind, err := collections.User().Indexes().CreateOne(context.TODO(), mod)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println("index", ind)
+
 	cursor, err := collections.User().Find(context.TODO(), bson.M{
 		"$text": bson.M{
 			"$search": key,
