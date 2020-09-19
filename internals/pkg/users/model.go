@@ -81,4 +81,5 @@ type SearchStruct struct {
 	UserName string             `json:"userName" bson:"user_name"`
 	Phone    string             `json:"phone" bson:"phone"`
 	Mobile   string             `json:"mobile" bson:"mobile"`
+	ImageURL  string               `json:"imageUrl" bson:"image_url"`
 }
