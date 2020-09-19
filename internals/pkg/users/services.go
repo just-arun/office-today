@@ -13,6 +13,7 @@ import (
 	"github.com/just-arun/office-today/internals/pkg/posts"
 
 	Userstatus "github.com/just-arun/office-today/internals/pkg/users/userstatus"
+	"github.com/just-arun/office-today/internals/pkg/users/usertype"
 
 	Usertype "github.com/just-arun/office-today/internals/pkg/users/usertype"
 
@@ -349,4 +350,41 @@ func GetUserProfileService(userID string) (*UsersStruct, error) {
 	fmt.Println(user)
 
 	return &user, nil
+}
+
+// SearchUserService for searching users
+func SearchUserService(key string) ([]SearchStruct, error) {
+
+	mod := mongo.IndexModel{
+		Keys: bson.D{
+			{Key: "$**", Value: "text"},
+		},
+		Options: &options.IndexOptions{},
+	}
+	ind, err := collections.User().Indexes().CreateOne(context.TODO(), mod)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println("index", ind)
+
+	cursor, err := collections.User().Find(context.TODO(), bson.M{
+		"type": bson.M{
+			"$ne": usertype.Admin,
+		},
+		"$text": bson.M{
+			"$search": key,
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+	var users []SearchStruct
+	for cursor.Next(context.TODO()) {
+		var user SearchStruct
+		if err := cursor.Decode(&user); err != nil {
+			return nil, err
+		}
+		users = append(users, user)
+	}
+	return users, nil
 }

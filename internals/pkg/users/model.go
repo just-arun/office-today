@@ -73,3 +73,12 @@ type UsersStruct struct {
 	CreatedAt time.Time             `json:"cretedAt" bson:"created_at"`
 	UpdatedAt time.Time             `json:"updatedAt" bson:"updated_at"`
 }
+
+// SearchStruct for searching user
+type SearchStruct struct {
+	ID       primitive.ObjectID `json:"id" bson:"_id"`
+	Email    string             `json:"email" bson:"email"`
+	UserName string             `json:"userName" bson:"user_name"`
+	Phone    string             `json:"phone" bson:"phone"`
+	Mobile   string             `json:"mobile" bson:"mobile"`
+}
