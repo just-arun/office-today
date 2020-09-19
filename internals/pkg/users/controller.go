@@ -256,7 +256,7 @@ func GetOneUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := GetOne(bson.M{
+	result, err := GetOneUserService(bson.M{
 		"_id": uID,
 	})
 
