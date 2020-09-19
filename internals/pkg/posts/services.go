@@ -535,6 +535,9 @@ func SearchPostService(key string) (interface{}, error) {
 	fmt.Println("index", ind)
 
 	cursor, err := collections.Post().Find(context.TODO(), bson.M{
+		"status": bson.M{
+			"$ne": poststatus.Deleted,
+		},
 		"$text": bson.M{
 			"$search": key,
 		},

@@ -124,7 +124,7 @@ func GetAllPost(w http.ResponseWriter, r *http.Request) {
 
 	if len(search) > 0 {
 		if search[0] != "" {
-			filter["$text"] = bson.M{ "$search": search[0] }
+			filter["$text"] = bson.M{"$search": search[0]}
 		}
 	}
 
@@ -325,6 +325,27 @@ func DeleteTag(w http.ResponseWriter, r *http.Request) {
 		map[string]interface{}{
 			"id": result,
 		},
+	)
+	return
+}
+
+// SearchPost for searching post
+func SearchPost(w http.ResponseWriter, r *http.Request) {
+	key := r.URL.Query()["key"]
+	var query = "";
+	if len(key) > 0 {
+		if key[0] != "" {
+			query = key[0]
+		}
+	}
+	result, err := SearchPostService(query)
+	if err != nil {
+		response.Error(w, http.StatusUnprocessableEntity, err.Error())
+		return
+	}
+	response.Success(w, r,
+		http.StatusCreated,
+		result,
 	)
 	return
 }
