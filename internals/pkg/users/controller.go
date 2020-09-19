@@ -19,8 +19,8 @@ import (
 func GetUsers(w http.ResponseWriter, r *http.Request) {
 	page := r.URL.Query()["page"]
 	userID := gCtx.Get(r, "uid").(string)
-	uID, err := primitive.ObjectIDFromHex(userID);
-	
+	uID, err := primitive.ObjectIDFromHex(userID)
+
 	if err != nil {
 		response.Error(w, http.StatusBadGateway, err.Error())
 		return
@@ -167,9 +167,8 @@ func BookmarkHandle(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-
 // GetUserProfile from getting user profile
-func GetUserProfile(w http.ResponseWriter, r *http.Request)  {
+func GetUserProfile(w http.ResponseWriter, r *http.Request) {
 	uID := gCtx.Get(r, "uid").(string)
 	user, err := GetUserProfileService(uID)
 	if err != nil {
@@ -185,6 +184,33 @@ func GetUserProfile(w http.ResponseWriter, r *http.Request)  {
 		w, r,
 		http.StatusOK,
 		user,
+	)
+	return
+}
+
+// SearchUsers for searching user
+func SearchUsers(w http.ResponseWriter, r *http.Request) {
+	key := r.URL.Query()["key"]
+	var query = ""
+	if len(key) > 0 {
+		if key[0] != "" {
+			query = key[0]
+		}
+	}
+	fmt.Printf("query %v\n", query)
+	reuslt, err := SearchUserService(query)
+	if err != nil {
+		response.Error(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if reuslt == nil {
+		reuslt = []SearchStruct{}
+	}
+
+	response.Success(
+		w, r,
+		http.StatusOK,
+		reuslt,
 	)
 	return
 }
