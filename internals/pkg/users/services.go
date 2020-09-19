@@ -194,28 +194,6 @@ func GetAll(
 	return users, nil
 }
 
-// GetUserPosts get all user posts
-func GetUserPosts(userID string, page int) ([]posts.GetPostStruct, error) {
-
-	ID, err := primitive.ObjectIDFromHex(userID)
-
-	if err != nil {
-		return nil, err
-	}
-
-	userPosts, err := posts.GetAll(
-		bson.M{
-			"user_id": ID,
-		},
-		page,
-	)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return userPosts, nil
-}
 
 // GetUserComments get all users posts
 func GetUserComments(userID string, comment []*comments.Comments) error {

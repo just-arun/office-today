@@ -214,3 +214,35 @@ func SearchUsers(w http.ResponseWriter, r *http.Request) {
 	)
 	return
 }
+
+// GetUserPosts for getting users post
+func GetUserPosts(w http.ResponseWriter, r *http.Request) {
+	uID := mux.Vars(r)["id"]
+	page := r.URL.Query()["page"]
+
+	count := 0
+	if len(page) > 0 {
+		if page[0] != "" {
+			num, err := strconv.Atoi(page[0])
+			if err != nil {
+				response.Error(w, http.StatusUnprocessableEntity, err.Error())
+				return
+			}
+			count = num
+		}
+	}
+
+	result, err := GetUserPostServices(count, uID)
+
+	if err != nil {
+		response.Error(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	response.Success(
+		w, r,
+		http.StatusOK,
+		result,
+	)
+	return
+}
