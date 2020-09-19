@@ -246,3 +246,29 @@ func GetUserPosts(w http.ResponseWriter, r *http.Request) {
 	)
 	return
 }
+
+// GetOneUser for getting one user
+func GetOneUser(w http.ResponseWriter, r *http.Request) {
+	user := mux.Vars(r)["id"]
+	uID, err := primitive.ObjectIDFromHex(user)
+	if err != nil {
+		response.Error(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	result, err := GetOne(bson.M{
+		"_id": uID,
+	})
+
+	if err != nil {
+		response.Error(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	response.Success(
+		w, r,
+		http.StatusOK,
+		result,
+	)
+	return
+}
