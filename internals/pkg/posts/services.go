@@ -518,3 +518,45 @@ func DeleteTagService(tagID string) (interface{}, error) {
 	}
 	return result.DeletedCount, nil
 }
+
+// SearchPostService for searching post
+func SearchPostService(key string) (interface{}, error) {
+
+	mod := mongo.IndexModel{
+		Keys: bson.D{
+			{Key: "$**", Value: "text"},
+		},
+		Options: &options.IndexOptions{},
+	}
+	ind, err := collections.Post().Indexes().CreateOne(context.TODO(), mod)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println("index", ind)
+
+	cursor, err := collections.Post().Find(context.TODO(), bson.M{
+		"$text": bson.M{
+			"$search": key,
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+	type sPost struct {
+		id          string `json:"id" bson:"_id"`
+		title       string `json:"title" bson:"title"`
+		description string `json:"description" bson:"description"`
+		imageURL    string `json:"imageUrl" bson:"image_url"`
+	}
+
+	var postList []sPost
+
+	for cursor.Next(context.TODO()) {
+		var post sPost
+		if err := cursor.Decode(&post); err != nil {
+			return nil, err
+		}
+		postList = append(postList, post)
+	}
+	return postList, nil
+}
