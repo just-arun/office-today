@@ -13,6 +13,7 @@ import (
 	"github.com/just-arun/office-today/internals/pkg/posts"
 
 	Userstatus "github.com/just-arun/office-today/internals/pkg/users/userstatus"
+	"github.com/just-arun/office-today/internals/pkg/users/usertype"
 
 	Usertype "github.com/just-arun/office-today/internals/pkg/users/usertype"
 
@@ -351,7 +352,6 @@ func GetUserProfileService(userID string) (*UsersStruct, error) {
 	return &user, nil
 }
 
-
 // SearchUserService for searching users
 func SearchUserService(key string) ([]SearchStruct, error) {
 
@@ -368,6 +368,9 @@ func SearchUserService(key string) ([]SearchStruct, error) {
 	fmt.Println("index", ind)
 
 	cursor, err := collections.User().Find(context.TODO(), bson.M{
+		"type": bson.M{
+			"$ne": usertype.Admin,
+		},
 		"$text": bson.M{
 			"$search": key,
 		},
@@ -385,5 +388,3 @@ func SearchUserService(key string) ([]SearchStruct, error) {
 	}
 	return users, nil
 }
-
-
