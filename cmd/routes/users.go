@@ -53,4 +53,10 @@ func Users(r *mux.Router) {
 			users.GetUserProfile,
 		),
 	).Methods("GET")
+
+	s.HandleFunc("/search/user",
+		middleware.Auth(
+			users.SearchUsers,
+		),
+	).Methods("GET")
 }
