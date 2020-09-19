@@ -350,3 +350,27 @@ func GetUserProfileService(userID string) (*UsersStruct, error) {
 
 	return &user, nil
 }
+
+
+// SearchUserService for searching users
+func SearchUserService(key string) ([]SearchStruct, error) {
+	cursor, err := collections.User().Find(context.TODO(), bson.M{
+		"$text": bson.M{
+			"$search": key,
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+	var users []SearchStruct
+	for cursor.Next(context.TODO()) {
+		var user SearchStruct
+		if err := cursor.Decode(&user); err != nil {
+			return nil, err
+		}
+		users = append(users, user)
+	}
+	return users, nil
+}
+
+
