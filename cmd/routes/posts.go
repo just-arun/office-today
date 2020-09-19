@@ -116,4 +116,10 @@ func Posts(r *mux.Router) {
 		),
 	).Methods("DELETE")
 
+	s.HandleFunc("/search/post", 
+		middleware.Auth(
+			posts.SearchPost,
+		),
+	).Methods("GET")
+
 }
