@@ -520,7 +520,7 @@ func DeleteTagService(tagID string) (interface{}, error) {
 }
 
 // SearchPostService for searching post
-func SearchPostService(key string) (interface{}, error) {
+func SearchPostService(key string) ([]SearchPostStruct, error) {
 
 	mod := mongo.IndexModel{
 		Keys: bson.D{
@@ -545,20 +545,14 @@ func SearchPostService(key string) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	type sPost struct {
-		id          string `json:"id" bson:"_id"`
-		title       string `json:"title" bson:"title"`
-		description string `json:"description" bson:"description"`
-		imageURL    string `json:"imageUrl" bson:"image_url"`
-	}
-
-	var postList []sPost
+	var postList []SearchPostStruct
 
 	for cursor.Next(context.TODO()) {
-		var post sPost
+		var post SearchPostStruct
 		if err := cursor.Decode(&post); err != nil {
 			return nil, err
 		}
+		fmt.Println(post)
 		postList = append(postList, post)
 	}
 	return postList, nil

@@ -306,7 +306,7 @@ func GetTags(w http.ResponseWriter, r *http.Request) {
 		result = []Tags{}
 	}
 	response.Success(w, r,
-		http.StatusCreated,
+		http.StatusOK,
 		result,
 	)
 	return
@@ -321,7 +321,7 @@ func DeleteTag(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	response.Success(w, r,
-		http.StatusCreated,
+		http.StatusOK,
 		map[string]interface{}{
 			"id": result,
 		},
@@ -332,19 +332,24 @@ func DeleteTag(w http.ResponseWriter, r *http.Request) {
 // SearchPost for searching post
 func SearchPost(w http.ResponseWriter, r *http.Request) {
 	key := r.URL.Query()["key"]
-	var query = "";
+	var query = ""
 	if len(key) > 0 {
 		if key[0] != "" {
 			query = key[0]
 		}
 	}
+	fmt.Printf("query %v\n", query)
 	result, err := SearchPostService(query)
 	if err != nil {
 		response.Error(w, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
+	
+	if result == nil {
+		result = []SearchPostStruct{}
+	}
 	response.Success(w, r,
-		http.StatusCreated,
+		http.StatusOK,
 		result,
 	)
 	return
