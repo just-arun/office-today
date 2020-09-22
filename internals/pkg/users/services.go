@@ -194,7 +194,6 @@ func GetAll(
 	return users, nil
 }
 
-
 // GetUserComments get all users posts
 func GetUserComments(userID string, comment []*comments.Comments) error {
 	ID, err := primitive.ObjectIDFromHex(userID)
@@ -420,8 +419,6 @@ func GetUserPostServices(page int, userID string) ([]*posts.GetPostStruct, error
 	return postsList, nil
 }
 
-
-
 // GetUserFavServices for getting all posts
 func GetUserFavServices(page int, userID string) ([]*posts.GetPostStruct, error) {
 	uID, err := primitive.ObjectIDFromHex(userID)
@@ -429,13 +426,13 @@ func GetUserFavServices(page int, userID string) ([]*posts.GetPostStruct, error)
 		return nil, err
 	}
 	var user Users
-  if err := collections.Users().
-  findOne(context.TODO(),bson.M{
-		"_id": uID,
-	}).Decode(&user); err != nil {
+	if err := collections.User().
+		FindOne(context.TODO(),
+			bson.M{
+				"_id": uID,
+			}).Decode(&user); err != nil {
 		return nil, err
-  }
-
+	}
 
 	filter := bson.D{
 		{Key: "$match", Value: bson.M{
@@ -446,7 +443,7 @@ func GetUserFavServices(page int, userID string) ([]*posts.GetPostStruct, error)
 				"$ne": poststatus.Deleted,
 			},
 		}},
-  }
+	}
 
 	perPage := 20
 	var skip bson.D
