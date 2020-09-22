@@ -64,5 +64,11 @@ func Users(r *mux.Router) {
 		middleware.Auth(
 			users.GetUserPosts,
 		),
-	).Methods("GET")
+  ).Methods("GET")
+  
+  s.HandleFunc("/{id}",
+    middleware.Auth(
+      users.GetOneUser,
+    ),
+  ).Methods("GET")
 }
