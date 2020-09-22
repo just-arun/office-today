@@ -429,13 +429,13 @@ func GetUserFavServices(page int, userID string) ([]*posts.GetPostStruct, error)
 		return nil, err
 	}
 	var user Users
-	err = collections.Users().findOne(context.TODO(),bson.M{
+  if err := collections.Users().
+  findOne(context.TODO(),bson.M{
 		"_id": uID,
-	}).Decode(&user)
-
-	if err != nil {
+	}).Decode(&user); err != nil {
 		return nil, err
-	}
+  }
+
 
 	filter := bson.D{
 		{Key: "$match", Value: bson.M{
