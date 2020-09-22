@@ -419,3 +419,68 @@ func GetUserPostServices(page int, userID string) ([]*posts.GetPostStruct, error
 
 	return postsList, nil
 }
+
+
+
+// GetUserFavServices for getting all posts
+func GetUserFavServices(page int, userID string) ([]*posts.GetPostStruct, error) {
+	uID, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		return nil, err
+	}
+	var user Users
+	err = collections.Users().findOne(context.TODO(),bson.M{
+		"_id": uID,
+	}).Decode(&user)
+
+	if err != nil {
+		return nil, err
+	}
+
+	filter := bson.D{
+		{Key: "$match", Value: bson.M{
+			"user_id": bson.M{
+				"$in": user.Likes,
+			},
+			"status": bson.M{
+				"$ne": poststatus.Deleted,
+			},
+		}},
+  }
+
+	perPage := 20
+	var skip bson.D
+	if page > 0 {
+		skip = bson.D{{Key: "$skip", Value: (page * perPage) - perPage}}
+	} else {
+		skip = bson.D{{Key: "$skip", Value: 0}}
+	}
+
+	limit := bson.D{{Key: "$limit", Value: perPage}}
+
+	cursor, err := collections.Post().Aggregate(context.TODO(),
+		mongo.Pipeline{
+			filter,
+			skip,
+			limit,
+		},
+	)
+
+	if err != nil {
+		return nil, err
+	}
+	var postsList []*posts.GetPostStruct
+	for cursor.Next(context.TODO()) {
+		var post *posts.GetPostStruct
+		if err := cursor.Decode(&post); err != nil {
+			return nil, err
+		}
+		postsList = append(postsList, post)
+	}
+
+	if postsList == nil {
+		postsList = []*posts.GetPostStruct{}
+	}
+
+	return postsList, nil
+}
