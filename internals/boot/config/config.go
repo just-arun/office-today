@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -58,7 +57,6 @@ func Init() {
 		if err != nil {
 			panic(err)
 		}
-		fmt.Printf("FORMATING: %v \t %v", s, strInt)
 		return strInt
 	}
 
@@ -72,5 +70,4 @@ func Init() {
 	AESSecret = getEnvValue("AES_SECRET").(string)
 	MailName = getEnvValue("EMAIL").(string)
 	MailPass = getEnvValue("PASSWORD").(string)
-	fmt.Printf("[DURATION], %v \n", strToInt(getEnvValue("ACCESS_TOKEN_TIMING")))
 }
