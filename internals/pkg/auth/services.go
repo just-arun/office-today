@@ -106,7 +106,7 @@ func ResetPasswordService() {
 // UpdatePasswordService update password
 func UpdatePasswordService(email string, otp int) error {
 	var user users.Users
-	err := collections.User().FindOne(context.TODO(), bson.M{"email": email}).
+	err := collections.User().FindOne(context.TODO(), bson.M{"email": email, "otp": otp}).
 	Decode(&user)
 	if err != nil {
 		return err
