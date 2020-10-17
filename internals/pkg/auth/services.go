@@ -104,8 +104,37 @@ func ResetPasswordService() {
 }
 
 // UpdatePasswordService update password
-func UpdatePasswordService() {
+func UpdatePasswordService(email string, otp int) error {
+	var user users.Users
+	err := collections.User().FindOne(context.TODO(), bson.M{"email": email}).
+	Decode(&user)
+	if err != nil {
+		return err
+	}
 
+	pwd, err := password.Encrypt(user.Password)
+	if err != nil {
+		return err
+	}
+
+	_, err = collections.
+		User().
+		UpdateOne(context.TODO(),
+			bson.M{"email": email},
+			bson.M{
+				"$set": bson.M{
+					"otp": nil,
+					"password": pwd,
+				},
+			})
+	if err != nil {
+		if err != nil {
+			fmt.Println("error", err.Error())
+			return err
+		}
+		return err
+	}
+	return nil
 }
 
 // RefreshTokenService return refresh token

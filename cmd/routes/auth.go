@@ -3,8 +3,6 @@ package routes
 import (
 	"fmt"
 
-	"github.com/just-arun/office-today/internals/middleware"
-
 	"github.com/just-arun/office-today/internals/pkg/auth"
 
 	"github.com/gorilla/mux"
@@ -42,8 +40,8 @@ func Auth(r *mux.Router) {
 
 	// update password for users
 	s.HandleFunc("/update-password",
-		middleware.Auth(
-			auth.UpdatePassword,
-		),
+		// middleware.Auth(
+		auth.UpdatePassword,
+		// ),
 	).Methods("PATCH")
 }

@@ -102,7 +102,13 @@ func ResetPassword(w http.ResponseWriter, r *http.Request) {
 
 // UpdatePassword update password
 func UpdatePassword(w http.ResponseWriter, r *http.Request) {
-	io.WriteString(w, "update password")
+	var user users.Users
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+		io.WriteString(w, "update password")
+		return
+	}
+	UpdatePasswordService(user.Email, user.OTP)
+	io.WriteString(w, "password changed")
 }
 
 // RefreshToken update access token
