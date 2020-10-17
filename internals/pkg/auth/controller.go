@@ -91,7 +91,13 @@ func ForgotPassword(w http.ResponseWriter, r *http.Request) {
 
 // ResetPassword reset password
 func ResetPassword(w http.ResponseWriter, r *http.Request) {
-	io.WriteString(w, "reset password")
+	var user users.Users
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+		io.WriteString(w, "update password")
+		return
+	}
+	users.ResetPassword(user.Email)
+	io.WriteString(w, "update password")
 }
 
 // UpdatePassword update password

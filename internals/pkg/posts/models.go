@@ -45,6 +45,7 @@ type GetPostStruct struct {
 	Description  string                `json:"description,omitempty" bson:"description"`
 	ImageURL     string                `json:"imageUrl,omitempty" bson:"image_url"`
 	Owner        owner                 `json:"owner,omitempty,omitempty" bson:"owner,omitempty"`
+	UserID       primitive.ObjectID    `json:"userId" bson:"user_id"`
 	CommentsID   []primitive.ObjectID  `json:"commentsId,omitempty" bson:"comments_id,omitempty"`
 	CommentCount int                   `json:"commentCount,omitempty" bson:"comment_count"`
 	EnquiryID    []primitive.ObjectID  `json:"enquiryId,omitempty" bson:"enquiry_id"`
@@ -84,7 +85,7 @@ type User struct {
 // SearchPostStruct for searching post result
 type SearchPostStruct struct {
 	ID          primitive.ObjectID `json:"id" bson:"_id"`
-	Title       string `json:"title" bson:"title"`
-	Description string `json:"description" bson:"description"`
-	ImageURL    string `json:"imageUrl" bson:"image_url"`
+	Title       string             `json:"title" bson:"title"`
+	Description string             `json:"description" bson:"description"`
+	ImageURL    string             `json:"imageUrl" bson:"image_url"`
 }

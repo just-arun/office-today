@@ -21,5 +21,6 @@ require (
 	golang.org/x/text v0.3.3
 	golang.org/x/tools/gopls v0.4.4 // indirect
 	google.golang.org/genproto v0.0.0-20200815001618-f69a88009b70
+	gopkg.in/mail.v2 v2.3.1
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22
 )

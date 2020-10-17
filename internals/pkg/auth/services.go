@@ -6,10 +6,9 @@ import (
 	"fmt"
 	"math/rand"
 
-	"github.com/just-arun/office-today/internals/boot/collections"
-
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
+	"github.com/just-arun/office-today/internals/boot/collections"
 	"github.com/just-arun/office-today/internals/boot/config"
 	"github.com/just-arun/office-today/internals/util/aesencryption"
 	"github.com/just-arun/office-today/internals/util/message"
@@ -50,7 +49,7 @@ func LoginService(login *LoginDto) (map[string]interface{}, error) {
 			"$ne": userstatus.Disabled,
 		},
 	})
-	fmt.Println(user,login.Email)
+	fmt.Println(user, login.Email)
 	if err != nil {
 		return nil, errors.New("invalided credentials")
 	}
@@ -88,9 +87,9 @@ func ForgotPasswordService(email string) error {
 		return err
 	}
 
-	msg := "OTP:" + fmt.Sprint(otp) + " for loggin to office today app "
+	msg := "OTP: " + fmt.Sprint(otp) + " for loggin to offer today app "
 
-	err = message.Mail("arunberry47@gmail.com", msg)
+	err = message.Mail(email, "Forgot Password", msg)
 	fmt.Println(msg)
 	if err != nil {
 		fmt.Println("error", err.Error())

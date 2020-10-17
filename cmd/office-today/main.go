@@ -29,18 +29,20 @@ func main() {
 	routes.Fileupload(r)
 	routes.StaticFile(r)
 
-	port := fmt.Sprintf("127.0.0.1%v", config.Port)
+	port := fmt.Sprintf("%v%v", config.AppHost, config.Port)
 
 	fmt.Printf("server started at port http://%v\n", port)
 
 	fmt.Println(port)
 
-	srv := &http.Server{
-		Handler:      r,
-		Addr:         port,
-		WriteTimeout: 15 * time.Second,
-		ReadTimeout:  15 * time.Second,
-	}
+	fmt.Println(time.Now())
+	// srv := &http.Server{
+	// 	Handler:      r,
+	// 	Addr:         port,
+	// 	WriteTimeout: 15 * time.Second,
+	// 	ReadTimeout:  15 * time.Second,
+	// }
 
-	log.Fatal(srv.ListenAndServe(), "server terminated")
+	// log.Fatal(srv.ListenAndServe(), "server terminated")
+	log.Fatal(http.ListenAndServe(port, r), "Server crashed")
 }

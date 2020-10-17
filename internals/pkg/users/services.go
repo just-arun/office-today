@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/just-arun/office-today/internals/util/message"
 	"github.com/just-arun/office-today/internals/util/password"
 
 	"github.com/just-arun/office-today/internals/pkg/comments"
@@ -227,6 +228,13 @@ func GetUserComments(userID string, comment []*comments.Comments) error {
 
 // CreateUserService for creating user
 func CreateUserService(user Users) (string, error) {
+	user.CreatedAt = time.Now()
+	user.UpdatedAt = time.Now()
+	pwd, err := password.Encrypt(user.Password)
+	if err != nil {
+		return "", err
+	}
+	user.Password = pwd
 	ID, err := collections.User().InsertOne(context.TODO(), user)
 	if err != nil {
 		return "", err
@@ -447,14 +455,26 @@ func GetUserFavServices(page int, userID string) ([]*posts.GetPostStruct, error)
 		return nil, err
 	}
 
+	fmt.Printf("\n[Linkes]: %v\n", user.Likes);
+
+	match := []bson.M{}
+	
+	match = append(match, bson.M{
+		"status": bson.M{
+			"$ne": poststatus.Deleted,
+		},
+	})
+	match = append(match, bson.M{
+		"_id": bson.M{
+			"$in": user.Likes,
+		},
+	})
+	
+	fmt.Println(match)
+
 	filter := bson.D{
 		{Key: "$match", Value: bson.M{
-			"user_id": bson.M{
-				"$in": user.Likes,
-			},
-			"status": bson.M{
-				"$ne": poststatus.Deleted,
-			},
+			"$and": match,
 		}},
 	}
 
@@ -487,10 +507,20 @@ func GetUserFavServices(page int, userID string) ([]*posts.GetPostStruct, error)
 		}
 		postsList = append(postsList, post)
 	}
+	fmt.Printf("\nlikes%v\n", postsList)
 
 	if postsList == nil {
 		postsList = []*posts.GetPostStruct{}
 	}
 
 	return postsList, nil
+}
+
+
+// ResetPassword for reseting password
+func ResetPassword(email string) (error) {
+	
+	err := message.Mail(email, "forgot password", "this is test message");
+	// collections.User().FindOneAndUpdate()
+	return err;
 }

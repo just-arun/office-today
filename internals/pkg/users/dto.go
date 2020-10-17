@@ -24,6 +24,7 @@ type UpdateUserStruct struct {
 	PaymentTerms             string    `json:"paymentTerms,omitempty" bson:"payment_terms,omitempty"`
 	ContactPerson            string    `json:"contactPerson,omitempty" bson:"contact_person,omitempty"`
 	ContactPersonDestination string    `json:"contactPersonDescription,omitempty" bson:"contact_person_destination,omitempty"`
+	Expire                   time.Time `json:"expire,omitempty" bson:"expire"`
 
 	Status    userstatus.UserStatus `json:"userStatus,omitempty" bson:"status,omitempty"`
 	Type      usertype.UserType     `json:"userType,omitempty" bson:"type,omitempty"`

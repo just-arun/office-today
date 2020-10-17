@@ -10,6 +10,9 @@ import (
 )
 
 var (
+	// AppHost for host
+	AppHost string = ""
+
 	// Port application running port
 	Port string = ":"
 
@@ -60,6 +63,7 @@ func Init() {
 		return strInt
 	}
 
+	AppHost = getEnvValue("HOST").(string)
 	Port = ":" + getEnvValue("PORT").(string)
 	DatabaseHost = getEnvValue("DATABASE_HOST").(string)
 	DatabaseName = getEnvValue("DATABASE_NAME").(string)

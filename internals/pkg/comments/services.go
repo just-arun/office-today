@@ -3,6 +3,7 @@ package comments
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -44,6 +45,8 @@ func (c *Comments) Save(userID string) (string, error) {
 		return "", err
 	}
 	c.UserID = uID
+	c.CreatedAt = time.Now()
+	c.UpdatedAt = time.Now()
 	result, err := collections.
 		Comment().
 		InsertOne(context.TODO(), c)

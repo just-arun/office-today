@@ -33,6 +33,7 @@ type Users struct {
 	Fax                      string    `json:"fax,omitempty" bson:"fax"`
 	Mobile                   string    `json:"mobile,omitempty" bson:"mobile"`
 	RegistrationDate         time.Time `json:"registrationDate,omitempty" bson:"registration_date"`
+	Expire                   time.Time `json:"expire,omitempty" bson:"expire"`
 	Subscription             string    `json:"subscription,omitempty" bson:"subscription"`
 	PaymentTerms             string    `json:"paymentTerms,omitempty" bson:"payment_terms"`
 	ContactPerson            string    `json:"contactPerson,omitempty" bson:"contact_person"`
@@ -63,6 +64,7 @@ type UsersStruct struct {
 	Fax                      string    `json:"fax" bson:"fax"`
 	Mobile                   string    `json:"mobile" bson:"mobile"`
 	RegistrationDate         time.Time `json:"registrationDate" bson:"registration_date"`
+	Expire                   time.Time `json:"expire,omitempty" bson:"expire"`
 	Subscription             string    `json:"subscription" bson:"subscription"`
 	PaymentTerms             string    `json:"paymentTerms" bson:"payment_terms"`
 	ContactPerson            string    `json:"contactPerson" bson:"contact_person"`
@@ -81,5 +83,5 @@ type SearchStruct struct {
 	UserName string             `json:"userName" bson:"user_name"`
 	Phone    string             `json:"phone" bson:"phone"`
 	Mobile   string             `json:"mobile" bson:"mobile"`
-	ImageURL  string               `json:"imageUrl" bson:"image_url"`
+	ImageURL string             `json:"imageUrl" bson:"image_url"`
 }

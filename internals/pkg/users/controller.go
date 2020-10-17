@@ -84,6 +84,8 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	var user Users
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+		fmt.Println(user)
+		fmt.Println("[error]", err)
 		response.Error(w, http.StatusBadGateway, err.Error())
 		return
 	}
@@ -91,6 +93,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	uID, err := CreateUserService(user)
 
 	if err != nil {
+		fmt.Println("[error]", err)
 		response.Error(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -115,11 +118,12 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println(user)
+	fmt.Println(user.Status)
 
 	err := UpdateUserService(userID, bson.M{
 		"$set": user,
 	})
+	
 	if err != nil {
 		response.Error(w, http.StatusBadGateway, err.Error())
 		return
@@ -272,8 +276,6 @@ func GetOneUser(w http.ResponseWriter, r *http.Request) {
 	)
 	return
 }
-
-
 
 // GetUserFav for getting one user
 func GetUserFav(w http.ResponseWriter, r *http.Request) {

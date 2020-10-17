@@ -194,7 +194,8 @@ func GetPostComments(postID string) ([]CommentType, error) {
 		"created_at": 1,
 		"updated_at": 1,
 	}}}
-	filter := mongo.Pipeline{matchStage, lookupUser, unwindOwner, projectData}
+	sort := bson.D{{Key: "$sort", Value: bson.M{"created_at": -1}}}
+	filter := mongo.Pipeline{matchStage, sort, lookupUser, unwindOwner, projectData}
 	cursor, err := collections.Comment().Aggregate(
 		context.TODO(),
 		filter,
@@ -211,6 +212,11 @@ func GetPostComments(postID string) ([]CommentType, error) {
 		comment = append(comment, com)
 	}
 	fmt.Println(comment)
+
+	if comment == nil {
+		comment = []CommentType{}
+	}
+
 	return comment, nil
 }
 

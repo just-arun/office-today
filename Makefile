@@ -16,6 +16,16 @@ build:
 run:
 	./bin/office-today
 
+connect:
+	ssh root@128.199.30.69
+
+deploy:
+	make build
+	scp $(PWD)/bin/office-today root@128.199.30.69:/root/server
+
+push:
+	scp $(PWD)/bin/office-today root@128.199.30.69:/root/server
+
 clear:
 	rm -rf ./main
 	rm -rf ./bin/*

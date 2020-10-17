@@ -72,7 +72,7 @@ func Users(r *mux.Router) {
 		),
 	).Methods("GET")
 
-	s.HandleFunc("/{id}",
+	s.HandleFunc("/{id}/fav",
 		middleware.Auth(
 			users.GetUserFav,
 		),
